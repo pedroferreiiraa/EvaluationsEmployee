@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { Department } from '../../interfaces/department.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -13,10 +14,8 @@ export class DepartmentService {
   constructor(private http: HttpClient) {}
 
   // Método para buscar os departamentos
-  getDepartments(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl).pipe(
-      catchError(this.handleError)
-    );
+  getDepartments(): Observable<{ data: Department[] }> {
+    return this.http.get<{ data: Department[] }>(this.apiUrl);
   }
 
   getDepartmentDetails(departmentId: number): Observable<any> {

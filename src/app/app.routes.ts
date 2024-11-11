@@ -4,14 +4,7 @@ export const APP_ROUTES: Routes = [
   // {
   //   path: '', pathMatch: 'full', redirectTo: 'products'
   // },
-  {
-    path: 'products',
-    loadChildren: () => import('./products/products.routes').then(r => r.PRODUCT_ROUTES)
-  },
-  {
-    path: 'cart',
-    loadComponent: () => import('./cart/cart/cart.component').then(c => c.CartComponent)
-  },
+
   {
     path: '',
     loadComponent: () => import('./login/login.component').then(l => l.LoginComponent)

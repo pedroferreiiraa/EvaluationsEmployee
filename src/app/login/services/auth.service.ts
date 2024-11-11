@@ -41,6 +41,15 @@ export class AuthService {
     return null;
   }
 
+  getUserId(): number | null {
+    const token = this.getToken();
+    if (token) {
+      const decodedToken = this.decodeJWT(token);
+      return decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+    }
+    return null; // Retorna null se não houver token
+  }
+
   // Função para decodificar o JWT
   private decodeJWT(token: string): any {
     try {
