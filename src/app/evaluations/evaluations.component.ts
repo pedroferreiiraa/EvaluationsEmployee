@@ -1,36 +1,63 @@
 import { Component, OnInit } from '@angular/core';
 import { EvaluationsService } from './services/evaluations.service';
-import { MatTableModule } from '@angular/material/table';
+import { DepartmentService } from '../home/services/departments/department.service';
+import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-evaluations',
-  standalone: true,
-  imports: [MatTableModule],
   templateUrl: './evaluations.component.html',
-  styleUrl: './evaluations.component.scss'
+  standalone: true,
+  imports: [CommonModule],
+  styleUrls: ['./evaluations.component.scss']
 })
 export class EvaluationsComponent implements OnInit {
-  questionId: number | null = null;
-  text: string = '';
-  topic: string = '';
-  evaluations: any[] = [];
+  departments: any[] = [];
+  evaluationsByUser: { [userId: number]: any[] } = {}; // inicialização garantida
+  expandedDepartments: Set<number> = new Set();
 
-
-  constructor(private evaluationService: EvaluationsService) {
-  
-  }
+  constructor(
+    private evaluationService: EvaluationsService,
+    private departmentService: DepartmentService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
+    this.fetchDepartmentsAndUsers();
   }
 
-  fetchUserEvaluations(): void {
-    this.evaluationService.getUserEvaluations().subscribe(
+  fetchDepartmentsAndUsers(): void {
+    this.departmentService.getDepartments().subscribe(
       (response: any) => {
-        const userEvaluationData = response.data;
-        this.questionId = userEvaluationData.questionId;
-        this.text = userEvaluationData.text;
-        this.topic = userEvaluationData.topic;
-        this.evaluations = userEvaluationData.evaluations;
+        this.departments = response.data;
+        
+        // Inicializar `evaluationsByUser` para todos os usuários para evitar `undefined`
+        this.departments.forEach(department => {
+          department.users.forEach((user: any) => {
+            if (!this.evaluationsByUser[user.id]) {
+              this.evaluationsByUser[user.id] = []; // inicialização com array vazio
+            }
+          });
+        });
+
+        this.fetchEvaluations();
+      },
+      (error: any) => {
+        console.error('Erro ao buscar departamentos:', error);
+      }
+    );
+  }
+
+  fetchEvaluations(): void {
+    this.evaluationService.getUserEvaluations().subscribe(
+      (evaluations: any[]) => {
+        evaluations.forEach(evaluation => {
+          const userId = evaluation.employeeId;
+          if (!this.evaluationsByUser[userId]) {
+            this.evaluationsByUser[userId] = [];
+          }
+          this.evaluationsByUser[userId].push(evaluation);
+        });
       },
       (error: any) => {
         console.error('Erro ao buscar avaliações:', error);
@@ -38,5 +65,23 @@ export class EvaluationsComponent implements OnInit {
     );
   }
 
+  toggleDepartment(departmentId: number): void {
+    if (this.expandedDepartments.has(departmentId)) {
+      this.expandedDepartments.delete(departmentId);
+    } else {
+      this.expandedDepartments.add(departmentId);
+    }
+  }
 
+  isExpanded(departmentId: number): boolean {
+    return this.expandedDepartments.has(departmentId);
+  }
+
+  goToEvaluationDetails(evaluationId: number): void {
+    this.router.navigate(['/evaluation-details', evaluationId]);
+  }
+
+  hasEvaluationsInDepartment(department: any): boolean {
+    return department.users.some((user: any) => this.evaluationsByUser[user.id]?.length > 0);
+  }
 }
