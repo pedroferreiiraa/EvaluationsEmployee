@@ -1,0 +1,40 @@
+<div class="department-detail container ml-40">
+    <h2 class="text-2xl mt-2 mb-2">Departamento: {{ departmentName }}</h2>
+
+    <table mat-table [dataSource]="users" class="mat-elevation-z8">
+  
+      <!-- Coluna Nome -->
+      <ng-container matColumnDef="fullName">
+        <th mat-header-cell *matHeaderCellDef> Nome </th>
+        <td mat-cell *matCellDef="let user"> {{ user.fullName }} </td>
+      </ng-container>
+  
+      <!-- Coluna Email -->
+
+  
+      <!-- Coluna Cargo -->
+      <ng-container matColumnDef="role">
+        <th mat-header-cell *matHeaderCellDef> Cargo </th>
+        <td mat-cell *matCellDef="let user"> {{ user.role }} </td>
+      </ng-container>
+  
+      <!-- Coluna Tipo de MO -->
+      <ng-container matColumnDef="typeMo">
+        <th mat-header-cell *matHeaderCellDef> Tipo MO </th>
+        <td mat-cell *matCellDef="let user"> {{ user.typeMo }} </td>
+      </ng-container>
+  
+      <!-- Coluna Código do Funcionário -->
+      <ng-container matColumnDef="codFuncionario">
+        <th mat-header-cell *matHeaderCellDef> Código Funcionário </th>
+        <td mat-cell *matCellDef="let user"> {{ user.codFuncionario }} </td>
+      </ng-container>
+  
+      <!-- Linha de Cabeçalho -->
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <!-- Linhas de Dados -->
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+  </div>
+  

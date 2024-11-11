@@ -1,0 +1,46 @@
+<div class="flex items-center justify-center min-h-screen bg-gray-100">
+  <div class="w-full max-w-md p-8 space-y-6 bg-white rounded shadow-md">
+    <h2 class="text-2xl font-bold text-center text-gray-700">Login</h2>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div>
+        <label for="email" class="block mb-2 text-sm font-medium text-gray-600">Código de Usuário</label>
+        <input
+          id="email"
+          type="text"
+          formControlName="email"
+          placeholder="Digite seu email"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md mb-2 focus:outline-none focus:ring focus:ring-indigo-100"
+        />
+        <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="mt-1 text-sm text-red-600">
+          Por favor, insira um login válido.
+        </div>
+      </div>
+
+      <div>
+        <label for="password" class="block mb-2 text-sm font-medium text-gray-600">Senha</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="Digite sua senha"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-indigo-100"
+        />
+        <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="mt-1 text-sm text-red-600">
+          A senha é obrigatória.
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        [disabled]="loginForm.invalid"
+        class="w-full py-2 mt-4 text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none disabled:bg-gray-400"
+      >
+        Entrar
+      </button>
+
+      <div *ngIf="errorMessage" class="mt-4 text-sm text-center text-red-600">
+        {{ errorMessage }}
+      </div>
+    </form>
+  </div>
+</div>
