@@ -1,0 +1,68 @@
+<div class="container mx-auto p-6 max-w-lg bg-white shadow-md rounded-lg">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Editar Usuário</h2>
+  
+    <form (ngSubmit)="onSubmit()" class="space-y-4">
+      <!-- Campo Nome Completo -->
+      <div>
+        <label for="fullName" class="block text-sm font-medium text-gray-700">Nome Completo</label>
+        <input
+          id="fullName"
+          [(ngModel)]="user.fullName"
+          name="fullName"
+          type="text"
+          required
+          class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+  
+      <!-- Campo Cargo -->
+      <div>
+        <label for="role" class="block text-sm font-medium text-gray-700">Cargo</label>
+        <input
+          id="role"
+          [(ngModel)]="user.role"
+          name="role"
+          type="text"
+          required
+          class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+  
+      <!-- Campo Tipo MO -->
+      <div>
+        <label for="typeMo" class="block text-sm font-medium text-gray-700">Tipo MO</label>
+        <input
+          id="typeMo"
+          [(ngModel)]="user.typeMo"
+          name="typeMo"
+          type="text"
+          required
+          class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+  
+      <!-- Campo Departamento -->
+      <div>
+        <label for="departmentId" class="block text-sm font-medium text-gray-700">Departamento</label>
+        <select
+          id="departmentId"
+          [(ngModel)]="user.departmentId"
+          name="departmentId"
+          class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+        >
+          <option *ngFor="let dept of departments" [value]="dept.id">
+            {{ dept.name }}
+          </option>
+        </select>
+      </div>
+  
+      <!-- Botão Salvar -->
+      <button
+        type="submit"
+        class="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      >
+        Salvar Alterações
+      </button>
+    </form>
+  </div>
+  
