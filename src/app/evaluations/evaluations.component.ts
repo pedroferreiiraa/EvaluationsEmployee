@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { EvaluationsService } from './services/evaluations.service';
-import { DepartmentService } from '../home/services/departments/department.service';
+import { HomeDepartmentService } from '../home/services/home-departments/department.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
@@ -15,10 +15,11 @@ export class EvaluationsComponent implements OnInit {
   departments: any[] = [];
   evaluationsByUser: { [userId: number]: any[] } = {}; // inicialização garantida
   expandedDepartments: Set<number> = new Set();
+  expandedUsers: Set<number> = new Set();
 
   constructor(
     private evaluationService: EvaluationsService,
-    private departmentService: DepartmentService,
+    private departmentService: HomeDepartmentService,
     private router: Router
   ) {}
 
@@ -84,4 +85,21 @@ export class EvaluationsComponent implements OnInit {
   hasEvaluationsInDepartment(department: any): boolean {
     return department.users.some((user: any) => this.evaluationsByUser[user.id]?.length > 0);
   }
+
+  toggleUserEvaluations(userId: number): void {
+    if (this.expandedUsers.has(userId)) {
+      this.expandedUsers.delete(userId);
+    } else {
+      this.expandedUsers.add(userId);
+    }
+  }
+
+  isUserExpanded(userId: number): boolean {
+    return this.expandedUsers.has(userId);
+  }
+
+  getCompletedEvaluationsCount(userId: number): number {
+    return this.evaluationsByUser[userId]?.filter(evaluation => evaluation.status === 4).length || 0;
+  }
+
 }
