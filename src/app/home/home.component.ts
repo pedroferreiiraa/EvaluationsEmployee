@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../login/services/auth.service';
-import { DepartmentService } from './services/departments/department.service';
+import { HomeDepartmentService } from './services/home-departments/department.service';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { UserService } from './services/user/user.service';
@@ -26,7 +26,7 @@ export class HomeComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private userService: UserService,
-    private departmentService: DepartmentService,
+    private departmentService: HomeDepartmentService,
     private http: HttpClient,
     private router: Router
   ) {}
@@ -90,4 +90,9 @@ export class HomeComponent implements OnInit {
   goToEvaluations(): void {
     this.router.navigate(['/avaliacoes'])
   }
+
+  hasRole(role: string): boolean {
+    return this.userRole === role;
+  }
+
 }
