@@ -16,13 +16,16 @@ export const APP_ROUTES: Routes = [
    
   },
   {
-    path: 'departments/:id',
-    loadComponent: () => import('./departments/departments.component').then(d => d.DepartmentDetailComponent),
-    
-  },
-  {
     path: 'avaliacoes',
     loadComponent: () => import('./evaluations/evaluations.component').then(e => e.EvaluationsComponent)
+  },
+  {
+    path: 'departments/:id',
+    loadComponent: () => import('./departments/departments.component').then(d => d.DepartmentDetailComponent),
+  },
+  {
+    path: 'edit-department/:id',
+    loadComponent: () => import('./edit-department/edit-department.component').then(e => e.EditDepartmentComponent)
   },
   {
     path: 'edit-user/:id',

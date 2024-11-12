@@ -8,9 +8,6 @@ import { Department } from '../../interfaces/department.interface';
   providedIn: 'root'
 })
 export class HomeDepartmentService {
-
-
- 
   private apiUrl = 'http://localhost:5001/api/departments'; // URL da sua API
 
   constructor(private http: HttpClient) {}

@@ -87,6 +87,10 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/departments', departmentId]);
   }
 
+  editDepartment(departmentId: number): void {
+    this.router.navigate(['/edit-department', departmentId]);
+  }
+
   goToEvaluations(): void {
     this.router.navigate(['/avaliacoes'])
   }
