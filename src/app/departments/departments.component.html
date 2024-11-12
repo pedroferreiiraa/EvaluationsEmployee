@@ -1,40 +1,56 @@
-<div class="department-detail container ml-40">
-    <h2 class="text-2xl mt-2 mb-2">Departamento: {{ departmentName }}</h2>
+<div class="container mx-auto p-4">
+  <button class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 mb-3 font-mono" (click)="rollbackPage()">Voltar</button>
+  <p class="text-2xl font-semibold text-gray-700 mb-4">Departamento: {{ departmentName }}</p>
+  <table mat-table [dataSource]="users" class="mat-elevation-z8 w-full bg-white border border-gray-200 rounded-lg shadow-lg">
 
-    <table mat-table [dataSource]="users" class="mat-elevation-z8">
-  
-      <!-- Coluna Nome -->
-      <ng-container matColumnDef="fullName">
-        <th mat-header-cell *matHeaderCellDef> Nome </th>
-        <td mat-cell *matCellDef="let user"> {{ user.fullName }} </td>
-      </ng-container>
-  
-      <!-- Coluna Email -->
+    <!-- Coluna Nome -->
+    <ng-container matColumnDef="fullName">
+      <th mat-header-cell *matHeaderCellDef class="bg-gray-100 text-left p-3 font-semibold text-gray-700"> Nome </th>
+      <td mat-cell *matCellDef="let user" class="p-3 border-t border-gray-200 text-gray-600"> {{ user.fullName }} </td>
+    </ng-container>
 
-  
-      <!-- Coluna Cargo -->
-      <ng-container matColumnDef="role">
-        <th mat-header-cell *matHeaderCellDef> Cargo </th>
-        <td mat-cell *matCellDef="let user"> {{ user.role }} </td>
-      </ng-container>
-  
-      <!-- Coluna Tipo de MO -->
-      <ng-container matColumnDef="typeMo">
-        <th mat-header-cell *matHeaderCellDef> Tipo MO </th>
-        <td mat-cell *matCellDef="let user"> {{ user.typeMo }} </td>
-      </ng-container>
-  
-      <!-- Coluna Código do Funcionário -->
-      <ng-container matColumnDef="codFuncionario">
-        <th mat-header-cell *matHeaderCellDef> Código Funcionário </th>
-        <td mat-cell *matCellDef="let user"> {{ user.codFuncionario }} </td>
-      </ng-container>
-  
-      <!-- Linha de Cabeçalho -->
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <!-- Linhas de Dados -->
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
+    <!-- Coluna Cargo -->
+    <ng-container matColumnDef="role">
+      <th mat-header-cell *matHeaderCellDef class="bg-gray-100 text-left p-3 font-semibold text-gray-700"> Nível no sistema </th>
+      <td mat-cell *matCellDef="let user" class="p-3 border-t border-gray-200 text-gray-600"> {{ user.role }} </td>
+    </ng-container>
 
-  </div>
-  
+    <!-- Coluna Tipo de MO -->
+    <ng-container matColumnDef="typeMo">
+      <th mat-header-cell *matHeaderCellDef class="bg-gray-100 text-left p-3 font-semibold text-gray-700"> Tipo MO </th>
+      <td mat-cell *matCellDef="let user" class="p-3 border-t border-gray-200 text-gray-600"> {{ user.typeMo }} </td>
+    </ng-container>
+
+    <!-- Coluna Código do Funcionário -->
+    <ng-container matColumnDef="codFuncionario">
+      <th mat-header-cell *matHeaderCellDef class="bg-gray-100 text-left p-3 font-semibold text-gray-700"> Código Funcionário </th>
+      <td mat-cell *matCellDef="let user" class="p-3 border-t border-gray-200 text-gray-600"> {{ user.codFuncionario }} </td>
+    </ng-container>
+
+    <!-- Coluna de Ações -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef class="bg-gray-100 text-left p-3 font-semibold text-gray-700"> Ações </th>
+      <td mat-cell *matCellDef="let user" class="p-3 border-t border-gray-200 text-gray-600">
+        <div class="flex gap-2">
+          <button
+            class="flex items-center gap-1 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
+            (click)="editUser(user.id)"
+          >
+            ✏️ <span>Editar</span>
+          </button>
+          <button
+            class="flex items-center gap-1 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300"
+            (click)="deleteUser(user.id)"
+          >
+            🗑️ <span>Excluir</span>
+          </button>
+        </div>
+      </td>
+    </ng-container>
+
+    <!-- Linha de Cabeçalho -->
+    <tr mat-header-row *matHeaderRowDef="displayedColumns" class="text-left"></tr>
+    <!-- Linhas de Dados -->
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-gray-50"></tr>
+  </table>
+</div>

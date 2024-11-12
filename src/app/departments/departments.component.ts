@@ -1,12 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { DepartmentService } from '../home/services/departments/department.service';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table'; // Importe o MatTableModule
+import { HomeDepartmentService } from '../home/services/home-departments/department.service';
+import { DepartmentService } from './services/department.service';
+import { MatDialogModule } from '@angular/material/dialog';
+
 @Component({
   selector: 'app-departments',
   standalone: true,
-  imports: [CommonModule, MatTableModule],
+  imports: [CommonModule, MatTableModule, MatDialogModule],
   templateUrl: './departments.component.html',
   styleUrl: './departments.component.scss'
 })
@@ -17,11 +20,15 @@ export class DepartmentDetailComponent implements OnInit {
   leaderId: number | null = null;
   managerId: number | null = null;
   users: any[] = [];
-  displayedColumns: string[] = ['fullName', 'role', 'typeMo', 'codFuncionario'];
+  displayedColumns: string[] = ['fullName', 'role', 'typeMo', 'codFuncionario', 'actions'];
+
 
   constructor(
     private route: ActivatedRoute,
-    private departmentService: DepartmentService
+    private router: Router,
+    private departmentService: DepartmentService,
+    private homeDepartmentService: HomeDepartmentService
+    
   ) {}
 
   ngOnInit(): void {
@@ -34,7 +41,7 @@ export class DepartmentDetailComponent implements OnInit {
   }
 
   fetchDepartmentDetails(departmentId: number): void {
-    this.departmentService.getDepartmentDetails(departmentId).subscribe(
+    this.homeDepartmentService.getDepartmentDetails(departmentId).subscribe(
       (response: any) => {
         const departmentData = response.data;
         this.departmentName = departmentData.name;
@@ -47,4 +54,26 @@ export class DepartmentDetailComponent implements OnInit {
       }
     );
   }
+
+  editUser(userId: number): void {
+    this.router.navigate(['/edit-user', userId]);
+  }
+
+  rollbackPage(): void {
+    this.router.navigate(['/home']);
+  }
+
+  // Função para excluir o usuário
+  deleteUser(userId: number): void {
+    this.departmentService.deleteUser(userId).subscribe(
+      () => {
+        // Atualiza a lista de usuários após a exclusão
+        this.users = this.users.filter(user => user.id !== userId);
+      },
+      (error: any) => {
+        console.error('Erro ao excluir o usuário:', error.message || error);
+      }
+    );
+  }
+  
 }

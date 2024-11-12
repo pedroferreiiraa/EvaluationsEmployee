@@ -21,7 +21,10 @@ export class HeaderComponent implements OnInit {
   showNavItems = true;
   userRole: string | null = null;
 
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(
+    private router: Router,
+     private authService: AuthService
+    ) {}
 
   ngOnInit(): void {
     this.userRole = this.authService.getRole(); // Obtém o role do usuário ao iniciar
@@ -33,7 +36,13 @@ export class HeaderComponent implements OnInit {
       });
   }
 
-  shouldShowItemForRole(requiredRole: string): boolean {
-    return this.userRole === requiredRole;
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/']);
   }
+
+  hasRole(role: string): boolean {
+    return this.userRole === role;
+  }
+
 }

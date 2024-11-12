@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { catchError, Observable, tap, throwError } from "rxjs";
+import { catchError, Observable, throwError, tap, of } from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +14,11 @@ export class AuthService {
   login(credentials: { email: string; password: string }): Observable<any> {
     return this.http.put(this.apiUrl, credentials).pipe(
       tap((response: any) => {
+        // Verifica se o usuário está deletado antes de salvar o token
+        if (response.isDeleted) {
+          throw new Error("Sua conta foi desativada. Entre em contato com o suporte para mais informações.");
+        }
+
         const token = response.token;
         if (token) {
           this.saveToken(token);
@@ -31,7 +36,6 @@ export class AuthService {
     return localStorage.getItem(this.tokenKey);
   }
 
-  // Método para decodificar o token e obter o role
   getRole(): string | null {
     const token = this.getToken();
     if (token) {
@@ -47,10 +51,18 @@ export class AuthService {
       const decodedToken = this.decodeJWT(token);
       return decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
     }
-    return null; // Retorna null se não houver token
+    return null;
   }
 
-  // Função para decodificar o JWT
+  logout(): void {
+    localStorage.removeItem(this.tokenKey);
+  }
+
+  isAuthenticated(): boolean {
+    const token = this.getToken();
+    return !!token;
+  }
+
   private decodeJWT(token: string): any {
     try {
       const payloadBase64 = token.split('.')[1];
@@ -63,6 +75,12 @@ export class AuthService {
   }
 
   private handleError(error: HttpErrorResponse): Observable<never> {
-    return throwError(() => error);
+    let errorMessage = "Ocorreu um erro inesperado. Por favor, tente novamente.";
+
+    if (error.message.includes("desativada")) {
+      errorMessage = error.message; // Usa a mensagem personalizada se o usuário estiver desativado
+    }
+
+    return throwError(() => new Error(errorMessage));
   }
 }

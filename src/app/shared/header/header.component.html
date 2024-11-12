@@ -1,8 +1,8 @@
 <header class="bg-blue-600 text-white shadow-md">
   <div class="container mx-auto flex items-center justify-between p-4">
     <!-- Logo ou Nome da Aplicação -->
-    <div class="text-lg font-semibold tracking-wider">
-      <a  href="home" class="text-white">Avaliação de Colaboradores</a>
+    <div class="text-2xl font-semibold tracking-wider">
+      <a  href="home" class="text-white font-sans">Avaliação de Colaboradores</a>
     </div>
 
     <!-- Menu de Navegação e Avatar (exibidos apenas se não estiver na rota /login) -->
@@ -12,7 +12,12 @@
       <a href="#" class="hover:text-blue-200">Configurações</a>
     </nav> -->
 
-  
+    <!-- <div *ngIf="hasRole('RH')" >
+      <a href="/adicionar-usuario" class="font-mono hover:bg-blue-700 p-2 rounded">Adicionar usuário</a>
+    </div> -->
+
+    <button *ngIf="showNavItems" class="font-sans text-xl" (click)="logout()">Sair</button>
+
 
     <!-- Avatar e Menu do Usuário (exibidos apenas se não estiver na rota /login) -->
   </div>

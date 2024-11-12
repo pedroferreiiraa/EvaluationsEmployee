@@ -86,6 +86,10 @@ export class EvaluationsComponent implements OnInit {
     return department.users.some((user: any) => this.evaluationsByUser[user.id]?.length > 0);
   }
 
+  rollbackPage(): void {
+    this.router.navigate(['/home']);
+  }
+
   toggleUserEvaluations(userId: number): void {
     if (this.expandedUsers.has(userId)) {
       this.expandedUsers.delete(userId);
