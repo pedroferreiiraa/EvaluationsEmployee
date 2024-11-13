@@ -25,5 +25,10 @@ export class DoUserEvaluationService {
   }): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/userAvaliations`, data);
   }
+
+  completeEvaluation(evaluationId: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/userAvaliations/${evaluationId}/complete`, {});
+  }
+
 }
 

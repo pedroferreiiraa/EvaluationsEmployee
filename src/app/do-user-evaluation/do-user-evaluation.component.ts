@@ -1,57 +1,104 @@
 import { Component, OnInit } from '@angular/core';
 import { DoUserEvaluationService } from './services/do-user-evaluation.service';
-import { ActivatedRoute } from '@angular/router';
-import {  FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { AuthService } from '../login/services/auth.service';
+import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-do-user-evaluation',
   standalone: true,
-  imports: [FormsModule, CommonModule, ReactiveFormsModule],
   templateUrl: './do-user-evaluation.component.html',
-  styleUrl: './do-user-evaluation.component.scss'
+  imports: [ReactiveFormsModule, CommonModule, FormsModule],
+  styleUrls: ['./do-user-evaluation.component.scss']
 })
 export class DoUserEvaluationComponent implements OnInit {
   evaluationForm: FormGroup | any;
 
-  questions: {
-    questionId: any; id: number; text: string; topic: string;
-}[] = [];
-
+  questions: any[] = [];
   answers: { questionId: number; answerNumber: number }[] = [];
-  userId: number = 0
-  status: number = 0; 
-  dateReference: string = new Date().toISOString().slice(0, 10); 
+  userId: number = 0;
+  status: number = 0;
+  dateReference: string = '';
 
   constructor(
     private evaluationService: DoUserEvaluationService,
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private authService: AuthService
+    private authService: AuthService,
+    private http: Router
   ) {}
 
   ngOnInit(): void {
-    this.userId = this.authService.getUserId(); // Obtém o userId do AuthService
-    this.loadQuestions();
-
+    this.userId = this.authService.getUserId();
+  
+    // Inicialize o evaluationForm primeiro
     this.evaluationForm = this.fb.group({
       answers: this.fb.array([]),
       improvePoints: ['', Validators.required],
       pdi: ['', Validators.required],
       goals: ['', Validators.required],
-      sixMonthAlignment: ['', Validators.required]
+      sixMonthAlignment: [''],
+      date: [''],
+      planoAndamento: [''],
+      justificativaPlano: [''],
+      metasAndamento: [''],
+      justificativaMetas: [''],
+      resultadosSemestre: [''],
+      consideracoesAnalise: ['']
     });
+  
+    // Agora você pode se inscrever em valueChanges
+    this.evaluationForm.valueChanges.subscribe(() => {
+      this.updateSixMonthAlignment();
+    });
+  
+    this.loadQuestions();
+  
+    // Calcula a data de hoje e a data de seis meses a partir de hoje
+    const today = new Date();
+    const sixMonthsFromToday = new Date();
+    sixMonthsFromToday.setMonth(sixMonthsFromToday.getMonth() + 6);
+  
+    this.dateReference = `${this.formatDate(today)} até ${this.formatDate(sixMonthsFromToday)}`;
+  }
+  
+
+  // Função para formatar a data no formato dd/mm/yyyy
+  private formatDate(date: Date): string {
+    const day = date.getDate().toString().padStart(2, '0'); // Dia com dois dígitos
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Mês com dois dígitos
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+
+  // Função para criar uma meta
+  createMeta(): FormGroup {
+    return this.fb.group({
+      descricao: [''],
+      prazo: [''],
+      status: ['']
+    });
+  }
+
+  // Função para adicionar uma nova meta
+  adicionarMeta() {
+    this.metas.push(this.createMeta());
+  }
+
+  // Getter para o FormArray de metas
+  get metas(): FormArray {
+    return this.evaluationForm.get('goals.metas') as FormArray;
   }
 
   loadQuestions(): void {
     this.evaluationService.getQuestions().subscribe(
       (response: any) => {
         this.questions = response.data;
-        console.log(this.questions);
         this.answers = this.questions.map(question => ({
-          questionId: question.questionId, // Use o questionId da resposta da API
-          answerNumber: 0 // Resposta padrão inicial
+          questionId: question.questionId,
+          answerNumber: 0
         }));
       },
       error => {
@@ -66,19 +113,42 @@ export class DoUserEvaluationComponent implements OnInit {
       evaluatorId: this.userId,
       status: this.status,
       dateReference: this.dateReference,
-      answers: this.answers, // Assumindo que answers ainda seja gerenciado separadamente
+      answers: this.answers,
       improvePoints: this.evaluationForm.get('improvePoints')?.value,
       pdi: this.evaluationForm.get('pdi')?.value,
       goals: this.evaluationForm.get('goals')?.value,
       sixMonthAlignment: this.evaluationForm.get('sixMonthAlignment')?.value
     };
-
+  
     this.evaluationService.submitEvaluation(evaluationData).subscribe(
-      () => {
-        console.log('Avaliação enviada com sucesso!', evaluationData);
+      (response: any) => {
+        console.log('Avaliação enviada com sucesso!', response);
+  
+        // Ajuste aqui para extrair o ID corretamente
+        const evaluationId = response.data; // Se o ID está em response.data
+  
+        // Verifique se evaluationId é válido
+        if (evaluationId) {
+          this.completeEvaluation(evaluationId);
+          this.http.navigate(['/home'])
+        } else {
+          console.error('ID da avaliação não encontrado na resposta do backend.');
+        }
       },
       error => {
         console.error('Erro ao enviar avaliação:', error);
+      }
+    );
+  }
+  
+  
+  completeEvaluation(evaluationId: number): void {
+    this.evaluationService.completeEvaluation(evaluationId).subscribe(
+      () => {
+        console.log('Avaliação marcada como completa!');
+      },
+      error => {
+        console.error('Erro ao marcar avaliação como completa:', error);
       }
     );
   }
@@ -86,23 +156,49 @@ export class DoUserEvaluationComponent implements OnInit {
   updateAnswer(index: number, event: Event): void {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement.value;
-  
-    // Ignora a atualização se o valor for vazio
+
     if (value === '') return;
-  
+
     const answerNumber = Number(value);
-  
-    // Atualize a resposta no índice correspondente
+
     if (index > -1 && index < this.answers.length) {
       this.answers[index].answerNumber = answerNumber;
     }
   }
-  
 
-  // Função auxiliar para obter a resposta para uma questão
-  getAnswerValue(questionId: number): number {
-    return this.answers.find(a => a.questionId === questionId)?.answerNumber || 0;
+  private formatDateString(dateString: string): string {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+
+  updateSixMonthAlignment() {
+    const alignmentData = this.evaluationForm.value;
+  
+    const sixMonthAlignmentValue = `
+  ALINHAMENTO SEMESTRAL (Considerações)
+  
+  Data: ${this.formatDateString(alignmentData.date)}
+  
+  Plano de melhoria traçado está em andamento? ${alignmentData.planoAndamento}
+  Justificativa:
+  ${alignmentData.justificativaPlano}
+  
+  Metas estabelecidas estão em andamento? ${alignmentData.metasAndamento}
+  Justifique:
+  ${alignmentData.justificativaMetas}
+  
+  Resultados do Semestre considerados: ${alignmentData.resultadosSemestre}
+  
+  Considerações sobre a análise e alinhamentos:
+  ${alignmentData.consideracoesAnalise}
+    `;
+  
+    this.evaluationForm.get('sixMonthAlignment').setValue(sixMonthAlignmentValue, { emitEvent: false });
   }
   
-
+  
 }
