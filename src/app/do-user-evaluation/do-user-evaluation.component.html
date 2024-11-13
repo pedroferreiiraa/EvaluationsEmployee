@@ -2,10 +2,10 @@
   <div class="container mx-auto bg-white p-6 rounded-lg shadow-md">
     <h2 class="text-2xl font-semibold text-gray-700 mb-6">Autoavaliação</h2>
 
-    <div class=" max-w-5xl mb-3 p-4 border rounded-lg bg-gray-50 shadow-md">
+    <div class=" max-w-2xl mb-3 p-4 border rounded-lg bg-gray-50 shadow-md">
       <p class="font-semibold mb-2">Preenchimento:</p>
       <ul class="list-disc pl-5 mb-2">
-        <li>Avaliado: Preencha o campo vazio com notas de 1 a 10 para cada indicador;</li>
+        <li>Avaliado: Preencha os campos vazios com notas de 1 a 10 para cada indicador.</li>
         <li>Leia atentamente a descrição de cada indicador e avalie o seu desempenho.</li>
         <li>O preenchimento de todos os indicadores expostos é obrigatório.</li>
       </ul>
@@ -50,85 +50,198 @@
           [id]="'question-' + question.id"
           [min]="0" 
           [max]="10" 
-          [value]="answers[i]?.answerNumber" 
+          [value]="answers[i].answerNumber" 
           (input)="updateAnswer(i, $event)"
           class="w-22 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
 
-      <div class="mt-6 p-4 border rounded-lg bg-gray-50 shadow-md">
-        <h3 class="font-semibold text-lg mb-4 text-gray-700">Pontos de Melhoria <span class="text-gray-700">(Para preenchimento juntamente com o lider)</span></h3>
-        <textarea formControlName="improvePoints" class="w-96 h-48 p-2 border rounded-lg mb-4"></textarea>
-    
-        <h3 class="font-semibold text-lg mb-4 text-gray-700">Plano de Desenvolvimento Individual (PDI)</h3>
-        <textarea formControlName="pdi" class="w-96 h-48  p-2 border rounded-lg mb-4"></textarea>
-    
-        <h3 class="font-semibold text-lg mb-4 text-gray-700">Metas</h3>
-        <textarea formControlName="goals" class="w-96 h-48  p-2 border rounded-lg mb-4"></textarea>
-    
-        <h3 class="font-semibold text-lg mb-4 text-gray-700">ALINHAMENTO SEMESTRAL (Considerações)</h3>
-
-        <div class="mb-4">
-          <label>Data:</label>
-          <input type="date" class="border rounded-lg" formControlName="date" (ngModelChange)="updateSixMonthAlignment()" />
-        </div>
-
-        <div class="mb-4">
-          <label>Plano de melhoria traçado está em andamento?</label><br/>
-          <label>
-            <input type="radio" name="planoAndamento" value="SIM" formControlName="planoAndamento" (change)="updateSixMonthAlignment()" /> SIM
+      <div class="mt-6 p-6 border border-gray-200 rounded-lg bg-white shadow-md  mx-auto">
+        <!-- Pontos de Melhoria -->
+        <div class="mb-8">
+          <label for="improvePoints" class="block text-gray-700 font-medium mb-2">
+            Pontos de Melhoria
+            <span class="text-gray-500">(Para preenchimento juntamente com o líder)</span>
           </label>
-          <label>
-            <input type="radio" name="planoAndamento" value="NÃO" formControlName="planoAndamento" (change)="updateSixMonthAlignment()" /> NÃO
+          <textarea
+            id="improvePoints"
+            formControlName="improvePoints"
+            class="w-full h-32 p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          ></textarea>
+        </div>
+      
+        <!-- Plano de Desenvolvimento Individual (PDI) -->
+        <div class="mb-8">
+          <label for="pdi" class="block text-gray-700 font-medium mb-2">
+            Plano de Desenvolvimento Individual (PDI)
           </label>
+          <textarea
+            id="pdi"
+            formControlName="pdi"
+            class="w-full h-32 p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          ></textarea>
         </div>
-
-        <div class="mb-4">
-          <label>Justificativa:</label><br/>
-          <textarea class="w-96 h-20 p-2 border rounded-lg" formControlName="justificativaPlano" (input)="updateSixMonthAlignment()"></textarea>
+      
+        <!-- Metas -->
+        <div class="mb-8">
+          <label for="goals" class="block text-gray-700 font-medium mb-2">Metas</label>
+          <textarea
+            id="goals"
+            formControlName="goals"
+            class="w-full h-32 p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          ></textarea>
         </div>
-
-        <div class="mb-4">
-          <label>Metas estabelecidas estão em andamento?</label><br/>
-          <label>
-            <input type="radio" name="metasAndamento" value="SIM" formControlName="metasAndamento" (change)="updateSixMonthAlignment()" /> SIM
+      
+        <!-- Alinhamento Semestral (Considerações) -->
+        <h3 class="font-semibold text-xl mb-6 text-gray-800">
+          Alinhamento Semestral (Considerações)
+        </h3>
+      
+        <!-- Data -->
+        <div class="mb-6">
+          <label for="date" class="block text-gray-700 font-medium mb-2">Data</label>
+          <input
+            type="date"
+            id="date"
+            formControlName="date"
+            class="w-46 p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+      
+        <!-- Plano de melhoria traçado está em andamento? -->
+        <div class="mb-6">
+          <p class="text-gray-700 font-medium mb-2">
+            Plano de melhoria traçado está em andamento?
+          </p>
+          <div class="flex items-center space-x-6">
+            <label class="flex items-center">
+              <input
+                type="radio"
+                formControlName="planoAndamento"
+                value="SIM"
+                class="form-radio h-4 w-4 text-blue-600"
+              />
+              <span class="ml-2 text-gray-700">SIM</span>
+            </label>
+            <label class="flex items-center">
+              <input
+                type="radio"
+                formControlName="planoAndamento"
+                value="NÃO"
+                class="form-radio h-4 w-4 text-blue-600"
+              />
+              <span class="ml-2 text-gray-700">NÃO</span>
+            </label>
+          </div>
+        </div>
+      
+        <!-- Justificativa -->
+        <div class="mb-6">
+          <label for="justificativaPlano" class="block text-gray-700 font-medium mb-2">
+            Justificativa
           </label>
-          <label>
-            <input type="radio" name="metasAndamento" value="NÃO" formControlName="metasAndamento" (change)="updateSixMonthAlignment()" /> NÃO
+          <textarea
+            id="justificativaPlano"
+            formControlName="justificativaPlano"
+            class="w-full h-24 p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          ></textarea>
+        </div>
+      
+        <!-- Metas estabelecidas estão em andamento? -->
+        <div class="mb-6">
+          <p class="text-gray-700 font-medium mb-2">
+            Metas estabelecidas estão em andamento?
+          </p>
+          <div class="flex items-center space-x-6">
+            <label class="flex items-center">
+              <input
+                type="radio"
+                formControlName="metasAndamento"
+                value="SIM"
+                class="form-radio h-4 w-4 text-blue-600"
+              />
+              <span class="ml-2 text-gray-700">SIM</span>
+            </label>
+            <label class="flex items-center">
+              <input
+                type="radio"
+                formControlName="metasAndamento"
+                value="NÃO"
+                class="form-radio h-4 w-4 text-blue-600"
+              />
+              <span class="ml-2 text-gray-700">NÃO</span>
+            </label>
+          </div>
+        </div>
+      
+        <!-- Justifique -->
+        <div class="mb-6">
+          <label for="justificativaMetas" class="block text-gray-700 font-medium mb-2">
+            Justifique
           </label>
+          <textarea
+            id="justificativaMetas"
+            formControlName="justificativaMetas"
+            class="w-full h-24 p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          ></textarea>
         </div>
-
-        <div class="mb-4">
-          <label>Justifique:</label><br/>
-          <textarea class="w-96 h-20 p-2 border rounded-lg" formControlName="justificativaMetas" (input)="updateSixMonthAlignment()"></textarea>
+      
+        <!-- Resultados do Semestre considerados -->
+        <div class="mb-6">
+          <p class="text-gray-700 font-medium mb-2">Resultados do Semestre considerados</p>
+          <div class="space-y-2">
+            <label class="flex items-center">
+              <input
+                type="radio"
+                formControlName="resultadosSemestre"
+                value="Muito Satisfatório"
+                class="form-radio h-4 w-4 text-blue-600"
+              />
+              <span class="ml-2 text-gray-700">Muito Satisfatório</span>
+            </label>
+            <label class="flex items-center">
+              <input
+                type="radio"
+                formControlName="resultadosSemestre"
+                value="Satisfatório"
+                class="form-radio h-4 w-4 text-blue-600"
+              />
+              <span class="ml-2 text-gray-700">Satisfatório</span>
+            </label>
+            <label class="flex items-center">
+              <input
+                type="radio"
+                formControlName="resultadosSemestre"
+                value="Insatisfatório"
+                class="form-radio h-4 w-4 text-blue-600"
+              />
+              <span class="ml-2 text-gray-700">Insatisfatório</span>
+            </label>
+          </div>
         </div>
-
-        <div class="mb-4">
-          <label>Resultados do Semestre considerados:</label><br/>
-          <label>
-            <input type="radio" name="resultadosSemestre" value="Muito Satisfatório" formControlName="resultadosSemestre" (change)="updateSixMonthAlignment()" /> Muito Satisfatório
-          </label><br/>
-          <label>
-            <input type="radio" name="resultadosSemestre" value="Satisfatório" formControlName="resultadosSemestre" (change)="updateSixMonthAlignment()" /> Satisfatório
-          </label><br/>
-          <label>
-            <input type="radio" name="resultadosSemestre" value="Insatisfatório" formControlName="resultadosSemestre" (change)="updateSixMonthAlignment()" /> Insatisfatório
+      
+        <!-- Considerações sobre a análise e alinhamentos -->
+        <div class="mb-6">
+          <label
+            for="consideracoesAnalise"
+            class="block text-gray-700 font-medium mb-2"
+          >
+            Considerações sobre a análise e alinhamentos
           </label>
+          <textarea
+            id="consideracoesAnalise"
+            formControlName="consideracoesAnalise"
+            class="w-full h-24 p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          ></textarea>
         </div>
-
-        <div class="mb-4">
-          <label>Considerações sobre a análise e alinhamentos:</label><br/>
-          <textarea class="w-96 h-20 p-2 border rounded-lg" formControlName="consideracoesAnalise" (input)="updateSixMonthAlignment()"></textarea>
-        </div>
-
+      
         <!-- Input oculto para manter o formControlName -->
         <input type="hidden" formControlName="sixMonthAlignment" />
-
-
       </div>
+      
 
       <button type="submit" 
-              class="w-32 mt-4 bg-blue-500 text-white font-semibold py-2 rounded-lg shadow-md hover:bg-blue-600 transition">
+              class="w-48 mt-4 bg-blue-500 text-white font-semibold p-4 rounded-lg shadow-md hover:bg-blue-600 transition">
         Enviar Avaliação
       </button>
     </form>
