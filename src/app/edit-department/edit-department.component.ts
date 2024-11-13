@@ -56,6 +56,7 @@ export class EditDepartmentComponent implements OnInit {
       this.editDepartmentService.updateDepartment(this.departmentId, this.departmentData).subscribe(
         () => {
           console.log('Departamento atualizado com sucesso!');
+          this.router.navigate(['/home'])
         },
         (error) => {
           console.error('Erro ao atualizar departamento:', error);
