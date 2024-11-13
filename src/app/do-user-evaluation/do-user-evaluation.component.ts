@@ -35,19 +35,20 @@ export class DoUserEvaluationComponent implements OnInit {
   
     // Inicialize o evaluationForm primeiro
     this.evaluationForm = this.fb.group({
-      answers: this.fb.array([]),
       improvePoints: ['', Validators.required],
       pdi: ['', Validators.required],
       goals: ['', Validators.required],
-      sixMonthAlignment: [''],
-      date: [''],
-      planoAndamento: [''],
-      justificativaPlano: [''],
-      metasAndamento: [''],
-      justificativaMetas: [''],
-      resultadosSemestre: [''],
-      consideracoesAnalise: ['']
+      sixMonthAlignment: ['', Validators.required],
+      date: ['', Validators.required],
+      planoAndamento: ['', Validators.required],
+      justificativaPlano: ['', Validators.required],
+      metasAndamento: ['', Validators.required],
+      justificativaMetas: ['', Validators.required],
+      resultadosSemestre: ['', Validators.required],
+      consideracoesAnalise: ['', Validators.required],
+      answers: this.fb.array([], Validators.required)
     });
+    
   
     // Agora você pode se inscrever em valueChanges
     this.evaluationForm.valueChanges.subscribe(() => {
@@ -73,64 +74,59 @@ export class DoUserEvaluationComponent implements OnInit {
     return `${day}/${month}/${year}`;
   }
 
-  // Função para criar uma meta
-  createMeta(): FormGroup {
-    return this.fb.group({
-      descricao: [''],
-      prazo: [''],
-      status: ['']
-    });
-  }
-
-  // Função para adicionar uma nova meta
-  adicionarMeta() {
-    this.metas.push(this.createMeta());
-  }
-
-  // Getter para o FormArray de metas
-  get metas(): FormArray {
-    return this.evaluationForm.get('goals.metas') as FormArray;
-  }
 
   loadQuestions(): void {
     this.evaluationService.getQuestions().subscribe(
       (response: any) => {
         this.questions = response.data;
-        this.answers = this.questions.map(question => ({
-          questionId: question.questionId,
-          answerNumber: 0
-        }));
+  
+        const answersFormArray = this.evaluationForm.get('answers') as FormArray;
+        answersFormArray.clear();
+  
+        this.questions.forEach(() => {
+          answersFormArray.push(this.fb.control('', Validators.required));
+        });
       },
       error => {
         console.error('Erro ao carregar questões:', error);
       }
     );
   }
+  
 
   submitEvaluation(): void {
+    if (this.evaluationForm.invalid) {
+      this.evaluationForm.markAllAsTouched(); // Marca todos os campos para exibir as mensagens de erro
+      return; // Impede o envio do formulário
+    }
+  
+    // Coleta as respostas do FormArray
+    const answersFormArray = this.evaluationForm.get('answers') as FormArray;
+    const answers = this.questions.map((question, index) => ({
+      questionId: question.questionId,
+      answerNumber: answersFormArray.at(index).value
+    }));
+  
     const evaluationData = {
       employeeId: this.userId,
       evaluatorId: this.userId,
       status: this.status,
       dateReference: this.dateReference,
-      answers: this.answers,
-      improvePoints: this.evaluationForm.get('improvePoints')?.value,
-      pdi: this.evaluationForm.get('pdi')?.value,
-      goals: this.evaluationForm.get('goals')?.value,
-      sixMonthAlignment: this.evaluationForm.get('sixMonthAlignment')?.value
+      answers: answers,
+      improvePoints: this.evaluationForm.get('improvePoints').value,
+      pdi: this.evaluationForm.get('pdi').value,
+      goals: this.evaluationForm.get('goals').value,
+      sixMonthAlignment: this.evaluationForm.get('sixMonthAlignment').value
     };
   
     this.evaluationService.submitEvaluation(evaluationData).subscribe(
       (response: any) => {
         console.log('Avaliação enviada com sucesso!', response);
+        const evaluationId = response.data;
   
-        // Ajuste aqui para extrair o ID corretamente
-        const evaluationId = response.data; // Se o ID está em response.data
-  
-        // Verifique se evaluationId é válido
         if (evaluationId) {
           this.completeEvaluation(evaluationId);
-          this.http.navigate(['/home'])
+          this.http.navigate(['/home']);
         } else {
           console.error('ID da avaliação não encontrado na resposta do backend.');
         }
@@ -140,6 +136,8 @@ export class DoUserEvaluationComponent implements OnInit {
       }
     );
   }
+  
+  
   
   
   completeEvaluation(evaluationId: number): void {

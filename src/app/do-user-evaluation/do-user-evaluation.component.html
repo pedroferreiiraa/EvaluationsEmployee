@@ -40,20 +40,24 @@
 
     
     <form [formGroup]="evaluationForm" (ngSubmit)="submitEvaluation()">
-      <div *ngFor="let question of questions; let i = index" class="mb-4">
-        <label [for]="'question-' + question.id" class="block text-gray-700 font-medium mb-2">
-          {{ question.text }}
-          {{ question.topic }}
-        </label>
-        <input 
-          type="number" 
-          [id]="'question-' + question.id"
-          [min]="0" 
-          [max]="10" 
-          [value]="answers[i].answerNumber" 
-          (input)="updateAnswer(i, $event)"
-          class="w-22 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+      <div formArrayName="answers">
+        <div *ngFor="let question of questions; let i = index" class="mb-4">
+          <label [for]="'question-' + question.id" class="block text-gray-700 font-medium mb-2">
+            {{ question.text }} {{ question.topic }}
+          </label>
+          <input 
+            type="number" 
+            [id]="'question-' + question.id"
+            [min]="0" 
+            [max]="10" 
+            [formControlName]="i"
+            class="w-22 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <!-- Mensagem de erro -->
+          <div *ngIf="evaluationForm.get('answers').controls[i].touched && evaluationForm.get('answers').controls[i].invalid" class="text-red-500 text-sm mt-1">
+            Este campo é obrigatório.
+          </div>
+        </div>
       </div>
 
       <div class="mt-6 p-6 border border-gray-200 rounded-lg bg-white shadow-md  mx-auto">
@@ -68,6 +72,9 @@
             formControlName="improvePoints"
             class="w-full h-32 p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           ></textarea>
+          <div *ngIf="evaluationForm.get('improvePoints').touched && evaluationForm.get('improvePoints').invalid" class="text-red-500 text-sm mt-1">
+            Este campo é obrigatório.
+          </div>
         </div>
       
         <!-- Plano de Desenvolvimento Individual (PDI) -->
@@ -80,6 +87,9 @@
             formControlName="pdi"
             class="w-full h-32 p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           ></textarea>
+          <div *ngIf="evaluationForm.get('pdi').touched && evaluationForm.get('pdi').invalid" class="text-red-500 text-sm mt-1">
+            Este campo é obrigatório.
+          </div>
         </div>
       
         <!-- Metas -->
@@ -90,6 +100,9 @@
             formControlName="goals"
             class="w-full h-32 p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           ></textarea>
+          <div *ngIf="evaluationForm.get('goals').touched && evaluationForm.get('goals').invalid" class="text-red-500 text-sm mt-1">
+            Este campo é obrigatório.
+          </div>
         </div>
       
         <!-- Alinhamento Semestral (Considerações) -->
@@ -106,6 +119,9 @@
             formControlName="date"
             class="w-46 p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+          <div *ngIf="evaluationForm.get('date').touched && evaluationForm.get('date').invalid" class="text-red-500 text-sm mt-1">
+            Este campo é obrigatório.
+          </div>
         </div>
       
         <!-- Plano de melhoria traçado está em andamento? -->
@@ -133,6 +149,9 @@
               <span class="ml-2 text-gray-700">NÃO</span>
             </label>
           </div>
+          <div *ngIf="evaluationForm.get('planoAndamento').touched && evaluationForm.get('planoAndamento').invalid" class="text-red-500 text-sm mt-1">
+            Selecione uma opção.
+          </div>
         </div>
       
         <!-- Justificativa -->
@@ -145,6 +164,9 @@
             formControlName="justificativaPlano"
             class="w-full h-24 p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           ></textarea>
+          <div *ngIf="evaluationForm.get('justificativaPlano').touched && evaluationForm.get('justificativaPlano').invalid" class="text-red-500 text-sm mt-1">
+            Este campo é obrigatório.
+          </div>
         </div>
       
         <!-- Metas estabelecidas estão em andamento? -->
@@ -171,6 +193,10 @@
               />
               <span class="ml-2 text-gray-700">NÃO</span>
             </label>
+          
+          </div>
+          <div *ngIf="evaluationForm.get('goals').touched && evaluationForm.get('goals').invalid" class="text-red-500 text-sm mt-1">
+            Este campo é obrigatório.
           </div>
         </div>
       
@@ -184,6 +210,9 @@
             formControlName="justificativaMetas"
             class="w-full h-24 p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           ></textarea>
+          <div *ngIf="evaluationForm.get('justificativaMetas').touched && evaluationForm.get('justificativaMetas').invalid" class="text-red-500 text-sm mt-1">
+            Este campo é obrigatório.
+          </div>
         </div>
       
         <!-- Resultados do Semestre considerados -->
@@ -218,6 +247,9 @@
               <span class="ml-2 text-gray-700">Insatisfatório</span>
             </label>
           </div>
+          <div *ngIf="evaluationForm.get('resultadosSemestre').touched && evaluationForm.get('resultadosSemestre').invalid" class="text-red-500 text-sm mt-1">
+            Este campo é obrigatório.
+          </div>
         </div>
       
         <!-- Considerações sobre a análise e alinhamentos -->
@@ -233,6 +265,9 @@
             formControlName="consideracoesAnalise"
             class="w-full h-24 p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           ></textarea>
+          <div *ngIf="evaluationForm.get('consideracoesAnalise').touched && evaluationForm.get('consideracoesAnalise').invalid" class="text-red-500 text-sm mt-1">
+            Este campo é obrigatório.
+          </div>
         </div>
       
         <!-- Input oculto para manter o formControlName -->
