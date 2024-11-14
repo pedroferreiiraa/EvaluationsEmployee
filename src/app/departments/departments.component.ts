@@ -5,6 +5,7 @@ import { MatTableModule } from '@angular/material/table'; // Importe o MatTableM
 import { HomeDepartmentService } from '../home/services/home-departments/department.service';
 import { DepartmentService } from './services/department.service';
 import { MatDialogModule } from '@angular/material/dialog';
+import { AuthService } from '../login/services/auth.service';
 
 @Component({
   selector: 'app-departments',
@@ -21,19 +22,24 @@ export class DepartmentDetailComponent implements OnInit {
   managerId: number | null = null;
   users: any[] = [];
   displayedColumns: string[] = ['fullName', 'role', 'typeMo', 'codFuncionario', 'actions'];
+  isLeader: boolean = false;
+  leaderUserId: number | null = null;
+
 
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private departmentService: DepartmentService,
-    private homeDepartmentService: HomeDepartmentService
+    private homeDepartmentService: HomeDepartmentService,
+    private authService: AuthService // Inject AuthService
     
   ) {}
 
   ngOnInit(): void {
-    // Obtém o ID do departamento da rota
     this.departmentId = Number(this.route.snapshot.paramMap.get('id'));
+    this.isLeader = this.authService.getRole() === 'Lider';
+    this.leaderUserId = this.authService.getUserId(); // Obtém o userId do líder logado
 
     if (this.departmentId) {
       this.fetchDepartmentDetails(this.departmentId);
@@ -47,13 +53,49 @@ export class DepartmentDetailComponent implements OnInit {
         this.departmentName = departmentData.name;
         this.leaderId = departmentData.liderId;
         this.managerId = departmentData.gestorId;
-        this.users = departmentData.users;
+        this.users = departmentData.users.map((user: { evaluationDate: any; }) => ({
+          ...user,
+          isEvaluated: !!user.evaluationDate, // Suponha que evaluationDate indica se já foi avaliado
+          evaluationDate: user.evaluationDate || null
+        }));
       },
       (error: any) => {
         console.error('Erro ao buscar detalhes do departamento:', error);
       }
     );
   }
+
+  goToUserEvaluation(employeeId: number): void {
+    console.log('Redirecionando para avaliação:', { evaluatorId: this.leaderUserId, employeeId });
+  
+    // Redireciona para o componente de avaliação com evaluatorId e employeeId
+    this.router.navigate(['/do-user-evaluation'], { 
+      queryParams: { evaluatorId: this.leaderUserId, employeeId }
+    });
+  }
+
+  evaluateUser(userId: number): void {
+    const evaluation = {
+      employeeId: userId,
+      evaluatorId: this.leaderUserId,
+      status: 'pending',
+      dateReference: new Date(),
+      answers: []
+    };
+
+    this.departmentService.createEvaluation(evaluation).subscribe(
+      (response: any) => {
+        console.log('Avaliação enviada:', response);
+        // Atualize a lista ou exiba uma notificação de sucesso
+      },
+      (error: any) => {
+        console.error('Erro ao enviar avaliação:', error);
+      }
+    );
+  }
+
+
+  
 
   editUser(userId: number): void {
     this.router.navigate(['/edit-user', userId]);
@@ -75,5 +117,7 @@ export class DepartmentDetailComponent implements OnInit {
       }
     );
   }
+
+
   
 }

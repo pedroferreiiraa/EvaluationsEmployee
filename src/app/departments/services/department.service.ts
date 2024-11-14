@@ -25,4 +25,13 @@ export class DepartmentService {
       })
     );
   }
+
+  createEvaluation(evaluation: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/createEvaluation`, evaluation).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('Erro ao criar avaliação:', error);
+        return throwError(() => new Error('Erro ao criar avaliação.'));
+      })
+    );
+  }
 }

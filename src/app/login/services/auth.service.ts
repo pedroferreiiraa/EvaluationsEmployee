@@ -45,13 +45,13 @@ export class AuthService {
     return null;
   }
 
-  getUserId(): number  {
+  getUserId(): number {
     const token = this.getToken();
     if (token) {
       const decodedToken = this.decodeJWT(token);
-      return decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+      return Number(decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"]);
     }
-    return 0
+    return 0;
   }
 
   logout(): void {

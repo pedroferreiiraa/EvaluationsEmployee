@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { EvaluationsService } from './services/evaluations.service';
 import { HomeDepartmentService } from '../home/services/home-departments/department.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -16,15 +16,19 @@ export class EvaluationsComponent implements OnInit {
   evaluationsByUser: { [userId: number]: any[] } = {}; // inicialização garantida
   expandedDepartments: Set<number> = new Set();
   expandedUsers: Set<number> = new Set();
+  
 
   constructor(
     private evaluationService: EvaluationsService,
     private departmentService: HomeDepartmentService,
+    private route: ActivatedRoute,  // Adicione o ActivatedRoute
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.fetchDepartmentsAndUsers();
+
+    
   }
 
   fetchDepartmentsAndUsers(): void {

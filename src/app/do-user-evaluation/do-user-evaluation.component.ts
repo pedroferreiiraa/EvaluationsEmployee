@@ -21,6 +21,8 @@ export class DoUserEvaluationComponent implements OnInit {
   userId: number = 0;
   status: number = 0;
   dateReference: string = '';
+  evaluatorId: number | null = null;
+  employeeId: number | null = null;
 
   constructor(
     private evaluationService: DoUserEvaluationService,
@@ -33,6 +35,13 @@ export class DoUserEvaluationComponent implements OnInit {
   ngOnInit(): void {
     this.userId = this.authService.getUserId();
   
+    this.route.queryParams.subscribe(params => {
+      this.evaluatorId = +params['evaluatorId'] || null;
+      this.employeeId = +params['employeeId'] || null;
+      
+      console.log('Parâmetros recebidos:', { evaluatorId: this.evaluatorId, employeeId: this.employeeId });
+    });
+
     // Inicialize o evaluationForm primeiro
     this.evaluationForm = this.fb.group({
       improvePoints: ['', Validators.required],
@@ -96,8 +105,18 @@ export class DoUserEvaluationComponent implements OnInit {
 
   submitEvaluation(): void {
     if (this.evaluationForm.invalid) {
-      this.evaluationForm.markAllAsTouched(); // Marca todos os campos para exibir as mensagens de erro
-      return; // Impede o envio do formulário
+      this.evaluationForm.markAllAsTouched();
+      return;
+    }
+  
+    // Se employeeId e evaluatorId não foram passados, define-os como o ID do usuário logado (autoavaliação)
+    const employeeId = this.employeeId ?? this.userId;
+    const evaluatorId = this.evaluatorId ?? this.userId;
+  
+    // Verifica novamente se employeeId e evaluatorId são válidos (após a definição para autoavaliação)
+    if (employeeId === null || evaluatorId === null) {
+      console.error('employeeId ou evaluatorId estão indefinidos');
+      return;
     }
   
     // Coleta as respostas do FormArray
@@ -108,8 +127,8 @@ export class DoUserEvaluationComponent implements OnInit {
     }));
   
     const evaluationData = {
-      employeeId: this.userId,
-      evaluatorId: this.userId,
+      employeeId: employeeId,
+      evaluatorId: evaluatorId,
       status: this.status,
       dateReference: this.dateReference,
       answers: answers,
@@ -136,6 +155,9 @@ export class DoUserEvaluationComponent implements OnInit {
       }
     );
   }
+  
+  
+  
   
   
   

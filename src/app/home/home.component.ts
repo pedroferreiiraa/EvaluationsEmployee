@@ -17,11 +17,11 @@ import { Router } from '@angular/router';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
+
   userRole: string | null = null;
   allDepartments: Department[] = [];
   completedEvaluationsCount: number = 0;
-  userDetails: { fullName?: string } = {}; // Inicialize userDetails como um objeto vazio
-
+  userDetails: { fullName?: string } = {}; 
 
   constructor(
     private authService: AuthService,
@@ -33,15 +33,24 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.userRole = this.authService.getRole();
-    this.fetchDepartments();
-    const userId = this.authService.getUserId(); // Obtenha o userId do token
+    const userId = this.authService.getUserId(); // Obtenha o userId diretamente do AuthService
+    
     if (userId) {
       this.fetchUserDetails(userId); // Passa o userId para buscar detalhes do usuário
     }
+    
     if (this.userRole === 'RH') {
       this.fetchCompletedEvaluations();
     }
+    
+    if (this.hasRole('Lider')) {
+      this.fetchLeaderDepartments(userId);
+    } else {
+      this.fetchDepartments();
+    }
   }
+  
+  
 
   fetchDepartments(): void {
     this.departmentService.getDepartments().subscribe(
@@ -49,16 +58,24 @@ export class HomeComponent implements OnInit {
         this.allDepartments = response.data;
       },
       (error: any) => {
-        console.error('Erro ao buscar departamentos:', error);
+        console.error('Erro ao buscar todos os departamentos:', error);
       }
     );
   }
 
-  getUserId(): number {
-    // Suponha que o userId esteja salvo no token ou no localStorage
-    const userId = localStorage.getItem('nameIdentifier'); // Exemplo, ajuste conforme necessário
-    return userId ? +userId : 0;
+  fetchLeaderDepartments(userId: number): void {
+    this.departmentService.getDepartments().subscribe(
+      (response: { data: Department[] }) => {
+        // Convertendo userId para número e filtrando corretamente
+        this.allDepartments = response.data.filter(department => department.liderId === Number(userId));
+        console.log('Departamentos liderados pelo usuário:', this.allDepartments); // Log para verificar os resultados
+      },
+      (error: any) => {
+        console.error('Erro ao buscar departamentos para líder:', error);
+      }
+    );
   }
+  
 
   fetchUserDetails(userId: number): void {
     this.userService.getUsersDetails(userId).subscribe(

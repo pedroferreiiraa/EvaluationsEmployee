@@ -44,9 +44,33 @@
           >
             🗑️ <span>Excluir</span>
           </button>
+          <button
+          *ngIf="isLeader"
+          class="flex items-center gap-1 px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 active:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-300"
+          (click)="goToUserEvaluation(user.id)"
+        >
+          📝 <span>Avaliar</span>
+        </button>
         </div>
       </td>
     </ng-container>
+
+    <!-- <ng-container *ngIf="isLeader" matColumnDef="evaluation">
+      <th mat-header-cell *matHeaderCellDef class="bg-gray-100 text-left p-3 font-semibold text-gray-700"> Avaliação </th>
+      <td mat-cell *matCellDef="let user" class="p-3 border-t border-gray-200 text-gray-600">
+        <div *ngIf="!user.isEvaluated; else evaluated">
+          <button
+            class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 active:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-300"
+            (click)="evaluateUser(user.id)"
+          >
+            Avaliar
+          </button>
+        </div>
+        <ng-template #evaluated>
+          <p>Avaliado em: {{ user.evaluationDate | date:'dd/MM/yyyy' }}</p>
+        </ng-template>
+      </td>
+    </ng-container> -->
 
     <!-- Linha de Cabeçalho -->
     <tr mat-header-row *matHeaderRowDef="displayedColumns" class="text-left"></tr>

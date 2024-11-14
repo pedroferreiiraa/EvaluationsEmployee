@@ -24,6 +24,10 @@ export const APP_ROUTES: Routes = [
     loadComponent: () => import('./do-user-evaluation/do-user-evaluation.component').then(e => e.DoUserEvaluationComponent)
   },
   {
+    path: 'do-leader-evaluation',
+    loadComponent: () => import('./do-leader-evaluation/do-leader-evaluation.component').then(l => l.DoLeaderEvaluationComponent)
+  },
+  {
     path: 'departments/:id',
     loadComponent: () => import('./departments/departments.component').then(d => d.DepartmentDetailComponent),
   },
