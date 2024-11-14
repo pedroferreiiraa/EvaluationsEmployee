@@ -82,8 +82,8 @@ export class EvaluationsComponent implements OnInit {
     return this.expandedDepartments.has(departmentId);
   }
 
-  goToEvaluationDetails(evaluationId: number): void {
-    this.router.navigate(['/evaluation-details', evaluationId]);
+  goToEvaluationDetails(userId: number, avaliationId: number): void {
+    this.router.navigate(['/user-details'], { queryParams: { userId, avaliationId } });
   }
 
   hasEvaluationsInDepartment(department: any): boolean {
@@ -108,6 +108,10 @@ export class EvaluationsComponent implements OnInit {
 
   getCompletedEvaluationsCount(userId: number): number {
     return this.evaluationsByUser[userId]?.filter(evaluation => evaluation.status === 4).length || 0;
+  }
+
+  goToUserDetails(userId: number): void {
+    this.router.navigate(['/user-details', userId]);
   }
 
 }

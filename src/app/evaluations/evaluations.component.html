@@ -4,13 +4,10 @@
 
   <!-- Itera sobre os departamentos -->
   <div *ngFor="let department of departments" class="mb-4">
-    <div
-      class="bg-gray-100 rounded-lg shadow p-4 cursor-pointer hover:bg-gray-200 transition"
-      (click)="toggleDepartment(department.id)"
-    >
+    <div class="bg-gray-100 rounded-lg shadow p-4 cursor-pointer hover:bg-gray-200 transition" (click)="toggleDepartment(department.id)">
       <div class="flex justify-between items-center">
         <h3 class="text-xl font-semibold text-gray-700">{{ department.name }}</h3>
-        <!-- Icone muda baseado no estado de expansão -->
+        <!-- Ícone de expansão -->
         <svg *ngIf="!isExpanded(department.id)" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
         </svg>
@@ -20,28 +17,17 @@
       </div>
     </div>
 
-    <!-- Exibe as avaliações do departamento ao expandir -->
+    <!-- Exibe os usuários do departamento ao expandir -->
     <div *ngIf="isExpanded(department.id)" class="mt-2 bg-white shadow rounded-lg p-4">
       <div *ngFor="let user of department.users" class="mb-2">
         <div
           class="p-4 bg-gray-50 rounded-lg shadow cursor-pointer hover:bg-gray-100 transition"
-          (click)="toggleUserEvaluations(user.id)"
+          (click)="goToUserDetails(user.id)"
         >
           <p class="text-md font-semibold text-gray-700">Colaborador: {{ user.fullName }}</p>
           <p class="text-sm text-gray-500 font-sans">Avaliações completadas: {{ getCompletedEvaluationsCount(user.id) }}</p>
         </div>
-
-        <!-- Avaliações do usuário ao expandir -->
-        <div *ngIf="isUserExpanded(user.id)" class="ml-4 mt-2">
-          <div *ngFor="let evaluation of evaluationsByUser[user.id]" class="p-3 border-b border-gray-200">
-            <p class="text-md text-gray-600 font-semibold font-sans">Concluído em: {{ evaluation.completedAt | date: 'dd/MM/yyyy HH:mm' }}</p>
-            <button (click)="goToEvaluationDetails(evaluation.avaliationId)" class="mt-2 text-blue-500 p-1 bg-blue-500 text-white font-semibold rounded hover:bg-blue-600 transition">
-              Ver Detalhes
-            </button>
-          </div>
-        </div>
       </div>
-
       <!-- Mensagem caso não haja avaliações no departamento -->
       <p *ngIf="!hasEvaluationsInDepartment(department)" class="text-md text-gray-500 mt-2">
         Nenhuma avaliação encontrada para este departamento.

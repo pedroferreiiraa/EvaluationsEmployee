@@ -76,7 +76,6 @@ export class HomeComponent implements OnInit {
     );
   }
   
-
   fetchUserDetails(userId: number): void {
     this.userService.getUsersDetails(userId).subscribe(
       (response: UserDetails) => {
@@ -109,7 +108,7 @@ export class HomeComponent implements OnInit {
   }
 
   goToEvaluations(): void {
-    this.router.navigate(['/avaliacoes'])
+    this.router.navigate(['/evaluations'])
   }
 
   hasRole(role: string): boolean {

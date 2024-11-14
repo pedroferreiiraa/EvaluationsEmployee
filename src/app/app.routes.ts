@@ -16,7 +16,7 @@ export const APP_ROUTES: Routes = [
    
   },
   {
-    path: 'avaliacoes',
+    path: 'evaluations',
     loadComponent: () => import('./evaluations/evaluations.component').then(e => e.EvaluationsComponent)
   },
   {
@@ -34,6 +34,10 @@ export const APP_ROUTES: Routes = [
   {
     path: 'edit-department/:id',
     loadComponent: () => import('./edit-department/edit-department.component').then(e => e.EditDepartmentComponent)
+  },
+  {
+    path: 'user-details/:id',
+    loadComponent: () => import('./user-details/user-details.component').then(u => u.UserDetailsComponent)
   },
   {
     path: 'edit-user/:id',
