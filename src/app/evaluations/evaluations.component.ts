@@ -3,6 +3,7 @@ import { EvaluationsService } from './services/evaluations.service';
 import { HomeDepartmentService } from '../home/services/home-departments/department.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../login/services/auth.service';
 
 @Component({
   selector: 'app-evaluations',
@@ -21,13 +22,15 @@ export class EvaluationsComponent implements OnInit {
   constructor(
     private evaluationService: EvaluationsService,
     private departmentService: HomeDepartmentService,
-    private route: ActivatedRoute,  // Adicione o ActivatedRoute
+    private route: ActivatedRoute,  
+    private authService: AuthService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.fetchDepartmentsAndUsers();
 
+    const userId = this.authService.getUserId()
     
   }
 
@@ -82,8 +85,8 @@ export class EvaluationsComponent implements OnInit {
     return this.expandedDepartments.has(departmentId);
   }
 
-  goToEvaluationDetails(userId: number, avaliationId: number): void {
-    this.router.navigate(['/user-details'], { queryParams: { userId, avaliationId } });
+  goToEvaluationDetails(userId: number): void {
+    this.router.navigate([`/user-details/${userId}`] );
   }
 
   hasEvaluationsInDepartment(department: any): boolean {

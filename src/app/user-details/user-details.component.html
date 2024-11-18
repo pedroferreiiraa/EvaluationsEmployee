@@ -1,42 +1,58 @@
-<div class="container mx-auto px-4 py-8">
-  <h2 class="text-xl font-semibold text-gray-900 mb-6">Detalhes da Avaliação do Colaborador</h2>
+<div *ngIf="user">
+  <div class="bg-white shadow-md rounded-lg p-6 mt-6">
+    <h2 class="text-2xl font-semibold text-gray-700">Informações do Usuário</h2>
+    <div class="mt-4">
+      <p class="text-lg text-gray-800"><strong>Nome Completo:</strong> {{ user.fullName }}</p>
+      <p class="text-lg text-gray-800"><strong>Email:</strong> {{ user.email }}</p>
+      <p class="text-lg text-gray-800"><strong>Setor:</strong> {{ user.department }}</p>
+    </div>
+  </div>
+</div>
 
-  <!-- Verifica se a avaliação é autoavaliação ou do líder -->
-  <div *ngIf="evaluation">
-      <!-- Se for autoavaliação -->
-      <div *ngIf="evaluation.evaluatorId === evaluation.employeeId">
-          <h3 class="text-lg font-semibold text-gray-700 mb-4">Autoavaliação</h3>
-          <div class="bg-white shadow rounded-lg p-4 mb-4">
-              <p class="text-md font-semibold text-gray-600">Período: {{ evaluation.dateReference }}</p>
-              <p class="text-sm text-gray-500">Concluído em: {{ evaluation.completedAt | date: 'dd/MM/yyyy HH:mm' }}</p>
-              
-              <div class="mt-2">
-                  <h4 class="font-semibold text-gray-600">Médias por Tópico:</h4>
-                  <ul class="list-disc ml-5">
-                      <li *ngFor="let topic of evaluation.topicAverages">
-                          {{ topic.topic }}: {{ topic.average }}
-                      </li>
-                  </ul>
-              </div>
-          </div>
+<div *ngIf="selfEvaluations.length > 0">
+  <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+    <h2 class="text-2xl font-semibold text-gray-700">Autoavaliações</h2>
+    <div *ngFor="let evaluation of selfEvaluations" class="mt-4">
+      <div class="border-b border-gray-300 pb-4">
+        <p class="text-lg font-medium text-gray-800"><strong>Avaliação realizada por:</strong> Você</p>
+        <p class="text-sm text-gray-500"><strong>Data de Avaliação:</strong> {{ evaluation.completedAt | date: 'dd/MM/yyyy' }}</p>
       </div>
 
-      <!-- Se for avaliação feita pelo líder -->
-      <div *ngIf="evaluation.evaluatorId !== evaluation.employeeId">
-          <h3 class="text-lg font-semibold text-gray-700 mb-4">Avaliação Realizada pelo Líder</h3>
-          <div class="bg-white shadow rounded-lg p-4 mb-4">
-              <p class="text-md font-semibold text-gray-600">Período: {{ evaluation.dateReference }}</p>
-              <p class="text-sm text-gray-500">Concluído em: {{ evaluation.completedAt | date: 'dd/MM/yyyy HH:mm' }}</p>
-              
-              <div class="mt-2">
-                  <h4 class="font-semibold text-gray-600">Médias por Tópico:</h4>
-                  <ul class="list-disc ml-5">
-                      <li *ngFor="let topic of evaluation.topicAverages">
-                          {{ topic.topic }}: {{ topic.average }}
-                      </li>
-                  </ul>
-              </div>
-          </div>
+      <div *ngFor="let answer of evaluation.answers" class="mt-4">
+        <div class="border-t border-gray-300 pt-4">
+          <p class="font-semibold text-gray-800"><strong>{{ answer.questionId }}:</strong> {{ answer.answerNumber }}</p>
+        </div>
       </div>
+
+      <div *ngFor="let topic of evaluation.topicAverages" class="mt-4">
+        <div class="border-t border-gray-300 pt-4">
+          <p class="font-semibold text-gray-800"><strong>{{ topic.topic }}:</strong> {{ topic.average }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="otherEvaluations.length > 0">
+  <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+    <h2 class="text-2xl font-semibold text-gray-700">Avaliações de Outros</h2>
+    <div *ngFor="let evaluation of otherEvaluations" class="mt-4">
+      <div class="border-b border-gray-300 pb-4">
+        <p class="text-lg font-medium text-gray-800"><strong>Avaliação realizada por:</strong> Avaliador ID: {{ evaluation.evaluatorId }}</p>
+        <p class="text-sm text-gray-500"><strong>Data de Avaliação:</strong> {{ evaluation.completedAt | date: 'dd/MM/yyyy' }}</p>
+      </div>
+
+      <div *ngFor="let answer of evaluation.answers" class="mt-4">
+        <div class="border-t border-gray-300 pt-4">
+          <p class="font-semibold text-gray-800"><strong>{{ answer.questionId }}:</strong> {{ answer.answerNumber }}</p>
+        </div>
+      </div>
+
+      <div *ngFor="let topic of evaluation.topicAverages" class="mt-4">
+        <div class="border-t border-gray-300 pt-4">
+          <p class="font-semibold text-gray-800"><strong>{{ topic.topic }}:</strong> {{ topic.average }}</p>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
