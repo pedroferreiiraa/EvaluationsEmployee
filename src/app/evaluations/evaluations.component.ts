@@ -37,41 +37,58 @@ export class EvaluationsComponent implements OnInit {
   fetchDepartmentsAndUsers(): void {
     this.departmentService.getDepartments().subscribe(
       (response: any) => {
+        console.log('Departamentos recebidos:', response); // Log dos dados recebidos
         this.departments = response.data;
-        
-        // Inicializar `evaluationsByUser` para todos os usuários para evitar `undefined`
+  
+        // Filtra os usuários deletados
         this.departments.forEach(department => {
+          department.users = department.users.filter((user: any) => !user.isDeleted);
+  
+          console.log(`Departamento ${department.id} (${department.name}):`, department.users); // Log dos usuários filtrados
+  
+          // Inicializa `evaluationsByUser` para os usuários restantes
           department.users.forEach((user: any) => {
             if (!this.evaluationsByUser[user.id]) {
-              this.evaluationsByUser[user.id] = []; // inicialização com array vazio
+              this.evaluationsByUser[user.id] = [];
             }
           });
         });
-
-        this.fetchEvaluations();
+  
+        this.fetchEvaluations(); // Busca as avaliações após ajustar os departamentos
       },
       (error: any) => {
         console.error('Erro ao buscar departamentos:', error);
       }
     );
   }
+  
+  
+  
 
   fetchEvaluations(): void {
     this.evaluationService.getUserEvaluations().subscribe(
       (evaluations: any[]) => {
+        console.log('Avaliações recebidas:', evaluations); // Log das avaliações recebidas
+  
         evaluations.forEach(evaluation => {
           const userId = evaluation.employeeId;
+  
           if (!this.evaluationsByUser[userId]) {
             this.evaluationsByUser[userId] = [];
           }
+  
           this.evaluationsByUser[userId].push(evaluation);
         });
+  
+        console.log('Avaliações por usuário:', this.evaluationsByUser); // Log do mapeamento das avaliações por usuário
       },
       (error: any) => {
         console.error('Erro ao buscar avaliações:', error);
       }
     );
   }
+  
+  
 
   toggleDepartment(departmentId: number): void {
     if (this.expandedDepartments.has(departmentId)) {
@@ -90,8 +107,16 @@ export class EvaluationsComponent implements OnInit {
   }
 
   hasEvaluationsInDepartment(department: any): boolean {
-    return department.users.some((user: any) => this.evaluationsByUser[user.id]?.length > 0);
+    const hasEvaluations = department.users.some((user: any) => {
+      const evaluations = this.evaluationsByUser[user.id] || [];
+      console.log(`Usuário ${user.id} - Avaliações:`, evaluations); // Log das avaliações de cada usuário
+      return evaluations.length > 0;
+    });
+  
+    console.log(`Departamento ${department.id} tem avaliações?`, hasEvaluations); // Log do resultado
+    return hasEvaluations;
   }
+  
 
   rollbackPage(): void {
     this.router.navigate(['/home']);

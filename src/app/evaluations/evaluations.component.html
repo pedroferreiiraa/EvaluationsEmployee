@@ -1,13 +1,19 @@
 <div class="container mx-auto px-4 py-8">
-  <button class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 mb-3 font-mono" (click)="rollbackPage()">Voltar</button>
+  <!-- Botão de voltar -->
+  <button 
+    class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 mb-3 font-mono" 
+    (click)="rollbackPage()">
+    Voltar
+  </button>
+
+  <!-- Título principal -->
   <h2 class="text-xl font-semibold text-gray-900 mb-6">Avaliações por Departamento</h2>
 
-  <!-- Itera sobre os departamentos -->
+  <!-- Iteração sobre os departamentos -->
   <div *ngFor="let department of departments" class="mb-4">
     <div class="bg-gray-100 rounded-lg shadow p-4 cursor-pointer hover:bg-gray-200 transition" (click)="toggleDepartment(department.id)">
       <div class="flex justify-between items-center">
         <h3 class="text-xl font-semibold text-gray-700">{{ department.name }}</h3>
-        <!-- Ícone de expansão -->
         <svg *ngIf="!isExpanded(department.id)" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
         </svg>
@@ -16,22 +22,21 @@
         </svg>
       </div>
     </div>
-
-    <!-- Exibe os usuários do departamento ao expandir -->
+  
     <div *ngIf="isExpanded(department.id)" class="mt-2 bg-white shadow rounded-lg p-4">
-      <div *ngFor="let user of department.users" class="mb-2">
-        <div
-          class="p-4 bg-gray-50 rounded-lg shadow cursor-pointer hover:bg-gray-100 transition"
-          (click)="goToUserDetails(user.id)"
-        >
-          <p class="text-md font-semibold text-gray-700">Colaborador: {{ user.fullName }}</p>
-          <p class="text-sm text-gray-500 font-sans">Avaliações completadas: {{ getCompletedEvaluationsCount(user.id) }}</p>
+      <ng-container *ngIf="hasEvaluationsInDepartment(department)">
+        <div *ngFor="let user of department.users" class="mb-2">
+          <ng-container *ngIf="getCompletedEvaluationsCount(user.id) > 0">
+            <div class="p-4 bg-gray-50 rounded-lg shadow cursor-pointer hover:bg-gray-100 transition" (click)="goToUserDetails(user.id)">
+              <p class="text-md font-semibold text-gray-700">Colaborador: {{ user.fullName }}</p>
+              <p class="text-sm text-gray-500 font-sans">Avaliações completadas: {{ getCompletedEvaluationsCount(user.id) }}</p>
+            </div>
+          </ng-container>
         </div>
-      </div>
-      <!-- Mensagem caso não haja avaliações no departamento -->
+      </ng-container>
       <p *ngIf="!hasEvaluationsInDepartment(department)" class="text-md text-gray-500 mt-2">
         Nenhuma avaliação encontrada para este departamento.
       </p>
     </div>
   </div>
-</div>
+  

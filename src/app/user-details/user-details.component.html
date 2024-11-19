@@ -1,58 +1,73 @@
-<div *ngIf="user">
-  <div class="bg-white shadow-md rounded-lg p-6 mt-6">
+<div *ngIf="user" class=" mx-auto px-4 py-8">
+  <div class="bg-white shadow-md rounded-lg p-6 mb-6">
     <h2 class="text-2xl font-semibold text-gray-700">Informações do Usuário</h2>
     <div class="mt-4">
       <p class="text-lg text-gray-800"><strong>Nome Completo:</strong> {{ user.fullName }}</p>
-      <p class="text-lg text-gray-800"><strong>Email:</strong> {{ user.email }}</p>
-      <p class="text-lg text-gray-800"><strong>Setor:</strong> {{ user.department }}</p>
+      <p class="text-lg text-gray-800"><strong>Código do Colaborador: </strong> {{ user.codFuncionario }}</p>
     </div>
   </div>
-</div>
 
-<div *ngIf="selfEvaluations.length > 0">
-  <div class="bg-white shadow-md rounded-lg p-6 mb-6">
-    <h2 class="text-2xl font-semibold text-gray-700">Autoavaliações</h2>
-    <div *ngFor="let evaluation of selfEvaluations" class="mt-4">
-      <div class="border-b border-gray-300 pb-4">
-        <p class="text-lg font-medium text-gray-800"><strong>Avaliação realizada por:</strong> Você</p>
-        <p class="text-sm text-gray-500"><strong>Data de Avaliação:</strong> {{ evaluation.completedAt | date: 'dd/MM/yyyy' }}</p>
-      </div>
-
-      <div *ngFor="let answer of evaluation.answers" class="mt-4">
-        <div class="border-t border-gray-300 pt-4">
-          <p class="font-semibold text-gray-800"><strong>{{ answer.questionId }}:</strong> {{ answer.answerNumber }}</p>
+  <div class="flex flex-wrap gap-6">
+    <!-- Autoavaliações -->
+    <div class="flex-1 bg-white shadow-md rounded-lg p-6">
+      <h2 class="text-2xl font-semibold text-gray-700 mb-4">Avaliação do colaborador</h2>
+      <div *ngIf="selfEvaluations.length > 0; else noSelfEvaluations">
+        <div *ngFor="let evaluation of selfEvaluations">
+          <div class="border-b border-gray-300 pb-4 mb-4 cursor-pointer" (click)="toggleEvaluation('self', evaluation.avaliationId)">
+            <div class="flex justify-between items-center">
+              <p class="text-lg font-medium text-gray-800"><strong>Data:</strong> {{ evaluation.completedAt | date: 'dd/MM/yyyy' }}</p>
+              <svg *ngIf="!isEvaluationExpanded('self', evaluation.avaliationId)" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+              <svg *ngIf="isEvaluationExpanded('self', evaluation.avaliationId)" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+              </svg>
+            </div>
+          </div>
+          <div *ngIf="isEvaluationExpanded('self', evaluation.avaliationId)" class="ml-4 text-lg text-gray-600">
+            <div *ngFor="let answer of evaluation.answers" class="mt-2">
+              <p><strong>{{ answer.questionId }}:</strong> {{ answer.answerNumber }}</p>
+            </div>
+            <div *ngFor="let topic of evaluation.topicAverages" class="mt-2">
+              <p><strong>{{ topic.topic }}:</strong> {{ topic.average }}</p>
+            </div>
+          </div>
         </div>
       </div>
-
-      <div *ngFor="let topic of evaluation.topicAverages" class="mt-4">
-        <div class="border-t border-gray-300 pt-4">
-          <p class="font-semibold text-gray-800"><strong>{{ topic.topic }}:</strong> {{ topic.average }}</p>
-        </div>
-      </div>
+      <ng-template #noSelfEvaluations>
+        <p class="text-gray-500">Nenhuma autoavaliação encontrada.</p>
+      </ng-template>
     </div>
-  </div>
-</div>
 
-<div *ngIf="otherEvaluations.length > 0">
-  <div class="bg-white shadow-md rounded-lg p-6 mb-6">
-    <h2 class="text-2xl font-semibold text-gray-700">Avaliações de Outros</h2>
-    <div *ngFor="let evaluation of otherEvaluations" class="mt-4">
-      <div class="border-b border-gray-300 pb-4">
-        <p class="text-lg font-medium text-gray-800"><strong>Avaliação realizada por:</strong> Avaliador ID: {{ evaluation.evaluatorId }}</p>
-        <p class="text-sm text-gray-500"><strong>Data de Avaliação:</strong> {{ evaluation.completedAt | date: 'dd/MM/yyyy' }}</p>
-      </div>
-
-      <div *ngFor="let answer of evaluation.answers" class="mt-4">
-        <div class="border-t border-gray-300 pt-4">
-          <p class="font-semibold text-gray-800"><strong>{{ answer.questionId }}:</strong> {{ answer.answerNumber }}</p>
+    <!-- Avaliações de Outros -->
+    <div class="flex-1 bg-white shadow-md rounded-lg p-6">
+      <h2 class="text-2xl font-semibold text-gray-700 mb-4">Avaliação do líder</h2>
+      <div *ngIf="otherEvaluations.length > 0; else noOtherEvaluations">
+        <div *ngFor="let evaluation of otherEvaluations">
+          <div class="border-b border-gray-300 pb-4 mb-4 cursor-pointer" (click)="toggleEvaluation('other', evaluation.avaliationId)">
+            <div class="flex justify-between items-center">
+              <p class="text-lg font-medium text-gray-800"><strong>Data</strong> {{ evaluation.completedAt | date: 'dd/MM/yyyy' }}</p>
+              <svg *ngIf="!isEvaluationExpanded('other', evaluation.avaliationId)" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+              <svg *ngIf="isEvaluationExpanded('other', evaluation.avaliationId)" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+              </svg>
+            </div>
+          </div>
+          <div *ngIf="isEvaluationExpanded('other', evaluation.avaliationId)" class="ml-4 text-lg text-gray-600">
+            <div *ngFor="let answer of evaluation.answers" class="mt-2">
+              <p><strong>{{ answer.questionId }}:</strong> {{ answer.answerNumber }}</p>
+            </div>
+            <div *ngFor="let topic of evaluation.topicAverages" class="mt-2">
+              <p><strong>{{ topic.topic }}:</strong> {{ topic.average }}</p>
+            </div>
+          </div>
         </div>
       </div>
-
-      <div *ngFor="let topic of evaluation.topicAverages" class="mt-4">
-        <div class="border-t border-gray-300 pt-4">
-          <p class="font-semibold text-gray-800"><strong>{{ topic.topic }}:</strong> {{ topic.average }}</p>
-        </div>
-      </div>
+      <ng-template #noOtherEvaluations>
+        <p class="text-gray-500">Nenhuma avaliação de outros encontrada.</p>
+      </ng-template>
     </div>
   </div>
 </div>

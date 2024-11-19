@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { UserDetailsService } from './services/users.details.service';
+import { User } from '../home/interfaces/user.interface';
 
 interface AnswerData {
   answerId: number;
@@ -15,11 +16,6 @@ interface TopicAverage {
   average: number;
 }
 
-interface User {
-  fullName: string;
-  email: string;
-  department: string;
-}
 
 interface EvaluationData {
   avaliationId: number;
@@ -53,14 +49,14 @@ interface EvaluationResponse {
 export class UserEvaluationsComponent implements OnInit {
   selfEvaluations: EvaluationData[] = [];
   otherEvaluations: EvaluationData[] = [];
+  expandedEvaluations: { [key: string]: boolean } = {};
 
   userId: number | undefined;
   user: User | undefined;
 
   constructor(
     private route: ActivatedRoute,
-    private http: HttpClient,
-    private userDetailsService: UserDetailsService
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
@@ -79,6 +75,15 @@ export class UserEvaluationsComponent implements OnInit {
     this.http.get<User>(`http://localhost:5001/api/users/${this.userId}`).subscribe(user => {
       this.user = user;
     });
+  }
+
+  toggleEvaluation(type: 'self' | 'other', id: number): void {
+    const key = `${type}-${id}`;
+    this.expandedEvaluations[key] = !this.expandedEvaluations[key];
+  }
+  
+  isEvaluationExpanded(type: 'self' | 'other', id: number): boolean {
+    return !!this.expandedEvaluations[`${type}-${id}`];
   }
 
   fetchSelfEvaluations(): void {
@@ -102,4 +107,7 @@ export class UserEvaluationsComponent implements OnInit {
         console.error('Erro ao carregar as avaliações de outros:', error);
       });
   }
+
+  
+
 }

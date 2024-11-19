@@ -23,6 +23,7 @@ export class DepartmentDetailComponent implements OnInit {
   users: any[] = [];
   displayedColumns: string[] = ['fullName', 'role', 'typeMo', 'codFuncionario', 'actions'];
   isLeader: boolean = false;
+  isRh: boolean = false;
   leaderUserId: number | null = null;
 
 
@@ -39,6 +40,7 @@ export class DepartmentDetailComponent implements OnInit {
   ngOnInit(): void {
     this.departmentId = Number(this.route.snapshot.paramMap.get('id'));
     this.isLeader = this.authService.getRole() === 'Lider';
+    this.isRh = this.authService.getRole() === 'RH';
     this.leaderUserId = this.authService.getUserId(); // Obtém o userId do líder logado
 
     if (this.departmentId) {
@@ -50,10 +52,16 @@ export class DepartmentDetailComponent implements OnInit {
     this.homeDepartmentService.getDepartmentDetails(departmentId).subscribe(
       (response: any) => {
         const departmentData = response.data;
+  
+        // Filtra usuários não deletados
+        const filteredUsers = departmentData.users.filter((user: any) => !user.isDeleted);
+  
         this.departmentName = departmentData.name;
         this.leaderId = departmentData.liderId;
         this.managerId = departmentData.gestorId;
-        this.users = departmentData.users.map((user: { evaluationDate: any; }) => ({
+  
+        // Mapeia apenas os usuários não deletados
+        this.users = filteredUsers.map((user: { evaluationDate: any; }) => ({
           ...user,
           isEvaluated: !!user.evaluationDate, // Suponha que evaluationDate indica se já foi avaliado
           evaluationDate: user.evaluationDate || null
@@ -65,6 +73,7 @@ export class DepartmentDetailComponent implements OnInit {
     );
   }
 
+  
   goToUserEvaluation(employeeId: number): void {
     console.log('Redirecionando para avaliação:', { evaluatorId: this.leaderUserId, employeeId });
   
