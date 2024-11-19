@@ -40,21 +40,27 @@ export class EvaluationsComponent implements OnInit {
         console.log('Departamentos recebidos:', response); // Log dos dados recebidos
         this.departments = response.data;
   
-        // Filtra os usuários deletados
+        // Filtra os usuários deletados e diferencia os líderes
         this.departments.forEach(department => {
-          department.users = department.users.filter((user: any) => !user.isDeleted);
+          department.users = department.users
+            .filter((user: any) => !user.isDeleted) // Exclui usuários deletados
+            .map((user: any) => {
+              user.isLeader = user.role === 'Lider'; // Adiciona flag para líderes
+              return user;
+            });
   
-          console.log(`Departamento ${department.id} (${department.name}):`, department.users); // Log dos usuários filtrados
-  
-          // Inicializa `evaluationsByUser` para os usuários restantes
+          // Inicializa o mapeamento de avaliações para os usuários restantes
           department.users.forEach((user: any) => {
             if (!this.evaluationsByUser[user.id]) {
               this.evaluationsByUser[user.id] = [];
             }
           });
+  
+          console.log(`Departamento ${department.id} (${department.name}):`, department.users); // Log dos usuários processados
         });
   
-        this.fetchEvaluations(); // Busca as avaliações após ajustar os departamentos
+        // Busca as avaliações
+        this.fetchEvaluations();
       },
       (error: any) => {
         console.error('Erro ao buscar departamentos:', error);
@@ -64,26 +70,31 @@ export class EvaluationsComponent implements OnInit {
   
   
   
+  
 
   fetchEvaluations(): void {
+    // Busca avaliações de usuários
     this.evaluationService.getUserEvaluations().subscribe(
-      (evaluations: any[]) => {
-        console.log('Avaliações recebidas:', evaluations); // Log das avaliações recebidas
+      (userEvaluations: any[]) => {
+        console.log('Avaliações de usuários recebidas:', userEvaluations);
+        this.mapEvaluationsToUsers(userEvaluations);
   
-        evaluations.forEach(evaluation => {
-          const userId = evaluation.employeeId;
+        // Após buscar as avaliações de usuários, busca as avaliações dos líderes
+        this.evaluationService.getLeaderEvaluations().subscribe(
+          (leaderEvaluations: any[]) => {
+            console.log('Avaliações de líderes recebidas:', leaderEvaluations);
+            this.mapEvaluationsToUsers(leaderEvaluations);
   
-          if (!this.evaluationsByUser[userId]) {
-            this.evaluationsByUser[userId] = [];
+            // Log consolidado das avaliações
+            console.log('Avaliações por usuário:', this.evaluationsByUser);
+          },
+          (error: any) => {
+            console.error('Erro ao buscar avaliações de líderes:', error);
           }
-  
-          this.evaluationsByUser[userId].push(evaluation);
-        });
-  
-        console.log('Avaliações por usuário:', this.evaluationsByUser); // Log do mapeamento das avaliações por usuário
+        );
       },
       (error: any) => {
-        console.error('Erro ao buscar avaliações:', error);
+        console.error('Erro ao buscar avaliações de usuários:', error);
       }
     );
   }
@@ -109,14 +120,25 @@ export class EvaluationsComponent implements OnInit {
   hasEvaluationsInDepartment(department: any): boolean {
     const hasEvaluations = department.users.some((user: any) => {
       const evaluations = this.evaluationsByUser[user.id] || [];
-      console.log(`Usuário ${user.id} - Avaliações:`, evaluations); // Log das avaliações de cada usuário
+      console.log(`Usuário ${user.id} - Avaliações:`, evaluations);
       return evaluations.length > 0;
     });
   
-    console.log(`Departamento ${department.id} tem avaliações?`, hasEvaluations); // Log do resultado
+    console.log(`Departamento ${department.id} tem avaliações?`, hasEvaluations);
     return hasEvaluations;
   }
   
+  private mapEvaluationsToUsers(evaluations: any[]): void {
+    evaluations.forEach(evaluation => {
+      const userId = evaluation.employeeId;
+  
+      if (!this.evaluationsByUser[userId]) {
+        this.evaluationsByUser[userId] = [];
+      }
+  
+      this.evaluationsByUser[userId].push(evaluation);
+    });
+  }
 
   rollbackPage(): void {
     this.router.navigate(['/home']);

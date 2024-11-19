@@ -1,73 +1,174 @@
-<div *ngIf="user" class=" mx-auto px-4 py-8">
-  <div class="bg-white shadow-md rounded-lg p-6 mb-6">
-    <h2 class="text-2xl font-semibold text-gray-700">Informações do Usuário</h2>
-    <div class="mt-4">
+<div *ngIf="user" class="mx-auto px-4 py-8">
+  <!-- Informações do Usuário -->
+  <div class="bg-white shadow-md rounded-lg p-2 mb-6">
+    <div class="mt-1">
       <p class="text-lg text-gray-800"><strong>Nome Completo:</strong> {{ user.fullName }}</p>
-      <p class="text-lg text-gray-800"><strong>Código do Colaborador: </strong> {{ user.codFuncionario }}</p>
+      <p class="text-lg text-gray-800"><strong>Código do Colaborador:</strong> {{ user.codFuncionario }}</p>
     </div>
   </div>
 
-  <div class="flex flex-wrap gap-6">
-    <!-- Autoavaliações -->
-    <div class="flex-1 bg-white shadow-md rounded-lg p-6">
-      <h2 class="text-2xl font-semibold text-gray-700 mb-4">Avaliação do colaborador</h2>
-      <div *ngIf="selfEvaluations.length > 0; else noSelfEvaluations">
-        <div *ngFor="let evaluation of selfEvaluations">
-          <div class="border-b border-gray-300 pb-4 mb-4 cursor-pointer" (click)="toggleEvaluation('self', evaluation.avaliationId)">
-            <div class="flex justify-between items-center">
-              <p class="text-lg font-medium text-gray-800"><strong>Data:</strong> {{ evaluation.completedAt | date: 'dd/MM/yyyy' }}</p>
-              <svg *ngIf="!isEvaluationExpanded('self', evaluation.avaliationId)" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-              </svg>
-              <svg *ngIf="isEvaluationExpanded('self', evaluation.avaliationId)" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
-              </svg>
+  <!-- Avaliações -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Exibir as autoavaliações -->
+    <div *ngIf="selfEvaluations.length > 0" class="w-full">
+      <h3 class="text-lg font-semibold text-gray-700 mb-4">Autoavaliação</h3>
+      <div class="grid grid-cols-1 gap-4">
+        <div *ngFor="let evaluation of selfEvaluations" class="p-4 bg-gray-50 rounded-lg shadow cursor-pointer hover:bg-gray-100 transition">
+          <p><strong>Período de Referência:</strong> {{ evaluation.dateReference }}</p>
+
+          <div class="mt-4 space-y-4">
+            <h4 class="text-md font-semibold text-gray-700 mt-4">Médias dos Tópicos:</h4>
+            <ul>
+              <li *ngFor="let topic of evaluation.topicAverages">
+                {{ topic.topic }}: Média {{ topic.average }}
+              </li>
+            </ul>
+
+            <div>
+              <h4 class="text-md font-semibold text-gray-700">Pontos de Melhoria</h4>
+              <div *ngIf="evaluation.improvePoints" class="list-disc pl-5">
+                <div *ngFor="let point of evaluation.improvePoints.split('\n')">{{ point || 'Sem dados' }}</div>
+              </div>
+              <div *ngIf="!evaluation.improvePoints">Sem dados</div>
             </div>
-          </div>
-          <div *ngIf="isEvaluationExpanded('self', evaluation.avaliationId)" class="ml-4 text-lg text-gray-600">
-            <div *ngFor="let answer of evaluation.answers" class="mt-2">
-              <p><strong>{{ answer.questionId }}:</strong> {{ answer.answerNumber }}</p>
+
+            <div>
+              <h4 class="text-md font-semibold text-gray-700">PDI - Plano de Desenvolvimento Individual</h4>
+              <div *ngIf="evaluation.pdi" class="list-disc pl-5">
+                <div *ngFor="let point of evaluation.pdi.split('\n')">{{ point || 'Sem dados' }}</div>
+              </div>
+              <div *ngIf="!evaluation.pdi">Sem dados</div>
             </div>
-            <div *ngFor="let topic of evaluation.topicAverages" class="mt-2">
-              <p><strong>{{ topic.topic }}:</strong> {{ topic.average }}</p>
+
+            <div>
+              <h4 class="text-md font-semibold text-gray-700">Metas</h4>
+              <div *ngIf="evaluation.goals" class="list-disc pl-5">
+                <div *ngFor="let point of evaluation.goals.split('\n')">{{ point || 'Sem dados' }}</div>
+              </div>
+              <div *ngIf="!evaluation.goals">Sem dados</div>
+            </div>
+
+            <div *ngIf="evaluation.sixMonthAlignment">
+              <h4 class="text-md font-semibold text-gray-700">Alinhamento Semestral</h4>
+              <div class="mt-4 space-y-4">
+                <div class="flex flex-col">
+                  <span class="font-semibold text-gray-700">Plano de Melhoria em Andamento?</span>
+                  <p class="text-gray-800">{{ processSixMonthAlignment(evaluation.sixMonthAlignment)?.improvementPlanStatus || 'Sem dados' }}</p>
+                </div>
+            
+                <div class="flex flex-col">
+                  <span class="font-semibold text-gray-700">Metas em Andamento?</span>
+                  <p class="text-gray-800">{{ processSixMonthAlignment(evaluation.sixMonthAlignment)?.goalsStatus || 'Sem dados' }}</p>
+                </div>
+            
+                <div class="flex flex-col">
+                  <span class="font-semibold text-gray-700">Justificativa</span>
+                  <p class="text-gray-800">{{ processSixMonthAlignment(evaluation.sixMonthAlignment)?.justification || 'Sem dados' }}</p>
+                </div>
+            
+                <div class="flex flex-col">
+                  <span class="font-semibold text-gray-700">Resultados</span>
+                  <p class="text-gray-800">{{ processSixMonthAlignment(evaluation.sixMonthAlignment)?.semesterResults || 'Sem dados' }}</p>
+                </div>
+            
+                <div class="flex flex-col">
+                  <span class="font-semibold text-gray-700">Considerações</span>
+                  <p class="text-gray-800">{{ processSixMonthAlignment(evaluation.sixMonthAlignment)?.alignmentConsiderations || 'Sem dados' }}</p>
+                </div>
+              </div>
+            </div>
+            
+            <div *ngIf="!evaluation.sixMonthAlignment">
+              <p class="text-md text-gray-700">Alinhamento Semestral: Sem dados disponíveis.</p>
             </div>
           </div>
         </div>
       </div>
-      <ng-template #noSelfEvaluations>
-        <p class="text-gray-500">Nenhuma autoavaliação encontrada.</p>
-      </ng-template>
     </div>
 
-    <!-- Avaliações de Outros -->
-    <div class="flex-1 bg-white shadow-md rounded-lg p-6">
-      <h2 class="text-2xl font-semibold text-gray-700 mb-4">Avaliação do líder</h2>
-      <div *ngIf="otherEvaluations.length > 0; else noOtherEvaluations">
-        <div *ngFor="let evaluation of otherEvaluations">
-          <div class="border-b border-gray-300 pb-4 mb-4 cursor-pointer" (click)="toggleEvaluation('other', evaluation.avaliationId)">
-            <div class="flex justify-between items-center">
-              <p class="text-lg font-medium text-gray-800"><strong>Data</strong> {{ evaluation.completedAt | date: 'dd/MM/yyyy' }}</p>
-              <svg *ngIf="!isEvaluationExpanded('other', evaluation.avaliationId)" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-              </svg>
-              <svg *ngIf="isEvaluationExpanded('other', evaluation.avaliationId)" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
-              </svg>
+    <!-- Exibir as avaliações dos líderes -->
+    <div *ngIf="otherEvaluations.length > 0" class="w-full">
+      <h3 class="text-lg font-semibold text-gray-700 mb-4">Avaliações dos Líderes</h3>
+      <div class="grid grid-cols-1 gap-4">
+        <div *ngFor="let evaluation of otherEvaluations" class="p-4 bg-gray-50 rounded-lg shadow cursor-pointer hover:bg-gray-100 transition">
+          <p><strong>Período de Referência:</strong> {{ evaluation.dateReference }}</p>
+
+          <h4 class="text-md font-semibold text-gray-700 mt-4">Médias dos Tópicos:</h4>
+          <ul>
+            <li *ngFor="let topic of evaluation.topicAverages">
+              {{ topic.topic }}: Média {{ topic.average }}
+            </li>
+          </ul>
+
+          <div class="mt-4 space-y-4">
+            <div>
+              <h4 class="text-md font-semibold text-gray-700">Pontos de Melhoria</h4>
+              <div *ngIf="evaluation.improvePoints" class="list-disc pl-5">
+                <div *ngFor="let point of evaluation.improvePoints.split('\n')">{{ point || 'Sem dados' }}</div>
+              </div>
+              <div *ngIf="!evaluation.improvePoints">Sem dados</div>
             </div>
-          </div>
-          <div *ngIf="isEvaluationExpanded('other', evaluation.avaliationId)" class="ml-4 text-lg text-gray-600">
-            <div *ngFor="let answer of evaluation.answers" class="mt-2">
-              <p><strong>{{ answer.questionId }}:</strong> {{ answer.answerNumber }}</p>
+
+            <div>
+              <h4 class="text-md font-semibold text-gray-700">PDI - Plano de Desenvolvimento Individual</h4>
+              <div *ngIf="evaluation.pdi" class="list-disc pl-5">
+                <div *ngFor="let point of evaluation.pdi.split('\n')">{{ point || 'Sem dados' }}</div>
+              </div>
+              <div *ngIf="!evaluation.pdi">Sem dados</div>
             </div>
-            <div *ngFor="let topic of evaluation.topicAverages" class="mt-2">
-              <p><strong>{{ topic.topic }}:</strong> {{ topic.average }}</p>
+
+            <div>
+              <h4 class="text-md font-semibold text-gray-700">Metas</h4>
+              <div *ngIf="evaluation.goals" class="list-disc pl-5">
+                <div *ngFor="let point of evaluation.goals.split('\n')">{{ point || 'Sem dados' }}</div>
+              </div>
+              <div *ngIf="!evaluation.goals">Sem dados</div>
             </div>
+
+            <div *ngIf="evaluation.sixMonthAlignment">
+              <h4 class="text-md font-semibold text-gray-700">Alinhamento Semestral</h4>
+              <div class="mt-4 space-y-4">
+                <div class="flex flex-col">
+                  <span class="font-semibold text-gray-700">Plano de Melhoria em Andamento?</span>
+                  <p class="text-gray-800">{{ processSixMonthAlignment(evaluation.sixMonthAlignment)?.improvementPlanStatus || 'Sem dados' }}</p>
+                </div>
+            
+                <div class="flex flex-col">
+                  <span class="font-semibold text-gray-700">Metas em Andamento?</span>
+                  <p class="text-gray-800">{{ processSixMonthAlignment(evaluation.sixMonthAlignment)?.goalsStatus || 'Sem dados' }}</p>
+                </div>
+            
+                <div class="flex flex-col">
+                  <span class="font-semibold text-gray-700">Justificativa</span>
+                  <p class="text-gray-800">{{ processSixMonthAlignment(evaluation.sixMonthAlignment)?.justification || 'Sem dados' }}</p>
+                </div>
+            
+                <div class="flex flex-col">
+                  <span class="font-semibold text-gray-700">Resultados</span>
+                  <p class="text-gray-800">{{ processSixMonthAlignment(evaluation.sixMonthAlignment)?.semesterResults || 'Sem dados' }}</p>
+                </div>
+            
+                <div class="flex flex-col">
+                  <span class="font-semibold text-gray-700">Considerações</span>
+                  <p class="text-gray-800">{{ processSixMonthAlignment(evaluation.sixMonthAlignment)?.alignmentConsiderations || 'Sem dados' }}</p>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="!evaluation.sixMonthAlignment">
+              <p class="text-md text-gray-700">Alinhamento Semestral: Sem dados disponíveis.</p>
+            </div>
+
+           
           </div>
         </div>
       </div>
-      <ng-template #noOtherEvaluations>
-        <p class="text-gray-500">Nenhuma avaliação de outros encontrada.</p>
-      </ng-template>
     </div>
+
+    <!-- Placeholder caso não haja avaliações dos líderes -->
+    <ng-template #noLeaderEvaluations>
+      <div class="w-full p-4 bg-gray-50 rounded-lg shadow">
+        <p class="text-lg text-gray-800">Nenhuma avaliação de líder disponível.</p>
+      </div>
+    </ng-template>
   </div>
 </div>

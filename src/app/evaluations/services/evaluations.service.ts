@@ -7,6 +7,7 @@ import { catchError, map, Observable, throwError } from 'rxjs';
 })
 export class EvaluationsService {
   private apiUrl = 'http://localhost:5001/api/userAvaliations'
+  private leaderUrl = 'http://localhost:5001/api/leaderAvaliations'
 
   constructor(private http: HttpClient) { }
 
@@ -16,6 +17,11 @@ export class EvaluationsService {
     );
   }
   
+  getLeaderEvaluations(): Observable<any[]> {
+    return this.http.get<any[]>(this.leaderUrl).pipe(
+      catchError(this.handleError)
+    );
+  }
   
   
 

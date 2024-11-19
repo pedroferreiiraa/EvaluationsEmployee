@@ -1,1 +1,288 @@
-<p>do-leader-evaluation works!</p>
+<div class="min-h-screen bg-gray-50  ">
+    <div class="container mx-auto bg-white p-6 rounded-lg shadow-md">
+      <h2 class="text-2xl font-semibold text-gray-700 mb-6">Autoavaliação</h2>
+  
+      <div class=" max-w-2xl mb-3 p-4 border rounded-lg bg-gray-50 shadow-md">
+        <p class="font-semibold mb-2">Preenchimento:</p>
+        <ul class="list-disc pl-5 mb-2">
+          <li>Avaliado: Preencha os campos vazios com notas de 1 a 10 para cada indicador.</li>
+          <li>Leia atentamente a descrição de cada indicador e avalie o seu desempenho.</li>
+          <li>O preenchimento de todos os indicadores expostos é obrigatório.</li>
+        </ul>
+        <p class="font-semibold mb-2">Níveis de Escala:</p>
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr>
+              <th class="border-b-2 pb-2">NOTAS</th>
+              <th class="border-b-2 pb-2">NÍVEL</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="py-2 border-b">1, 2, 3 e 4</td>
+              <td class="py-2 border-b">Insatisfatório</td>
+            </tr>
+            <tr>
+              <td class="py-2 border-b">5 e 6</td>
+              <td class="py-2 border-b">Regular</td>
+            </tr>
+            <tr>
+              <td class="py-2 border-b">7 e 8</td>
+              <td class="py-2 border-b">Bom</td>
+            </tr>
+            <tr>
+              <td class="py-2">9 e 10</td>
+              <td class="py-2">Excelente</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+  
+      
+      <form [formGroup]="evaluationForm" (ngSubmit)="submitEvaluation()">
+        <div formArrayName="answers">
+          <div *ngFor="let question of questions; let i = index" class="mb-4">
+            <label [for]="'question-' + question.id" class="block text-gray-700 font-medium mb-2">
+              {{ question.text }} {{ question.topic }}
+            </label>
+            <input 
+              type="number" 
+              [id]="'question-' + question.id"
+              [min]="0" 
+              [max]="10" 
+              [formControlName]="i"
+              class="w-22 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <!-- Mensagem de erro -->
+            <div *ngIf="evaluationForm.get('answers').controls[i].touched && evaluationForm.get('answers').controls[i].invalid" class="text-red-500 text-sm mt-1">
+              Este campo é obrigatório.
+            </div>
+          </div>
+        </div>
+  
+        <div class="mt-6 p-6 border border-gray-200 rounded-lg bg-white shadow-md  mx-auto">
+          <!-- Pontos de Melhoria -->
+          <div class="mb-8">
+            <label for="improvePoints" class="block text-gray-700 font-medium mb-2">
+              Pontos de Melhoria
+              <span class="text-gray-500">(Para preenchimento juntamente com o líder)</span>
+            </label>
+            <textarea
+              id="improvePoints"
+              formControlName="improvePoints"
+              class="w-full h-32 p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            ></textarea>
+            <div *ngIf="evaluationForm.get('improvePoints').touched && evaluationForm.get('improvePoints').invalid" class="text-red-500 text-sm mt-1">
+              Este campo é obrigatório.
+            </div>
+          </div>
+        
+          <!-- Plano de Desenvolvimento Individual (PDI) -->
+          <div class="mb-8">
+            <label for="pdi" class="block text-gray-700 font-medium mb-2">
+              Plano de Desenvolvimento Individual (PDI)
+            </label>
+            <textarea
+              id="pdi"
+              formControlName="pdi"
+              class="w-full h-32 p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            ></textarea>
+            <div *ngIf="evaluationForm.get('pdi').touched && evaluationForm.get('pdi').invalid" class="text-red-500 text-sm mt-1">
+              Este campo é obrigatório.
+            </div>
+          </div>
+        
+          <!-- Metas -->
+          <div class="mb-8">
+            <label for="goals" class="block text-gray-700 font-medium mb-2">Metas</label>
+            <textarea
+              id="goals"
+              formControlName="goals"
+              class="w-full h-32 p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            ></textarea>
+            <div *ngIf="evaluationForm.get('goals').touched && evaluationForm.get('goals').invalid" class="text-red-500 text-sm mt-1">
+              Este campo é obrigatório.
+            </div>
+          </div>
+        
+          <!-- Alinhamento Semestral (Considerações) -->
+          <h3 class="font-semibold text-xl mb-6 text-gray-800">
+            Alinhamento Semestral (Considerações)
+          </h3>
+        
+          <!-- Data -->
+          <div class="mb-6">
+            <label for="date" class="block text-gray-700 font-medium mb-2">Data</label>
+            <input
+              type="date"
+              id="date"
+              formControlName="date"
+              class="w-46 p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <div *ngIf="evaluationForm.get('date').touched && evaluationForm.get('date').invalid" class="text-red-500 text-sm mt-1">
+              Este campo é obrigatório.
+            </div>
+          </div>
+        
+          <!-- Plano de melhoria traçado está em andamento? -->
+          <div class="mb-6">
+            <p class="text-gray-700 font-medium mb-2">
+              Plano de melhoria traçado está em andamento?
+            </p>
+            <div class="flex items-center space-x-6">
+              <label class="flex items-center">
+                <input
+                  type="radio"
+                  formControlName="planoAndamento"
+                  value="SIM"
+                  class="form-radio h-4 w-4 text-blue-600"
+                />
+                <span class="ml-2 text-gray-700">SIM</span>
+              </label>
+              <label class="flex items-center">
+                <input
+                  type="radio"
+                  formControlName="planoAndamento"
+                  value="NÃO"
+                  class="form-radio h-4 w-4 text-blue-600"
+                />
+                <span class="ml-2 text-gray-700">NÃO</span>
+              </label>
+            </div>
+            <div *ngIf="evaluationForm.get('planoAndamento').touched && evaluationForm.get('planoAndamento').invalid" class="text-red-500 text-sm mt-1">
+              Selecione uma opção.
+            </div>
+          </div>
+        
+          <!-- Justificativa -->
+          <div class="mb-6">
+            <label for="justificativaPlano" class="block text-gray-700 font-medium mb-2">
+              Justificativa
+            </label>
+            <textarea
+              id="justificativaPlano"
+              formControlName="justificativaPlano"
+              class="w-full h-24 p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            ></textarea>
+            <div *ngIf="evaluationForm.get('justificativaPlano').touched && evaluationForm.get('justificativaPlano').invalid" class="text-red-500 text-sm mt-1">
+              Este campo é obrigatório.
+            </div>
+          </div>
+        
+          <!-- Metas estabelecidas estão em andamento? -->
+          <div class="mb-6">
+            <p class="text-gray-700 font-medium mb-2">
+              Metas estabelecidas estão em andamento?
+            </p>
+            <div class="flex items-center space-x-6">
+              <label class="flex items-center">
+                <input
+                  type="radio"
+                  formControlName="metasAndamento"
+                  value="SIM"
+                  class="form-radio h-4 w-4 text-blue-600"
+                />
+                <span class="ml-2 text-gray-700">SIM</span>
+              </label>
+              <label class="flex items-center">
+                <input
+                  type="radio"
+                  formControlName="metasAndamento"
+                  value="NÃO"
+                  class="form-radio h-4 w-4 text-blue-600"
+                />
+                <span class="ml-2 text-gray-700">NÃO</span>
+              </label>
+            
+            </div>
+            <div *ngIf="evaluationForm.get('goals').touched && evaluationForm.get('goals').invalid" class="text-red-500 text-sm mt-1">
+              Este campo é obrigatório.
+            </div>
+          </div>
+        
+          <!-- Justifique -->
+          <div class="mb-6">
+            <label for="justificativaMetas" class="block text-gray-700 font-medium mb-2">
+              Justifique
+            </label>
+            <textarea
+              id="justificativaMetas"
+              formControlName="justificativaMetas"
+              class="w-full h-24 p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            ></textarea>
+            <div *ngIf="evaluationForm.get('justificativaMetas').touched && evaluationForm.get('justificativaMetas').invalid" class="text-red-500 text-sm mt-1">
+              Este campo é obrigatório.
+            </div>
+          </div>
+        
+          <!-- Resultados do Semestre considerados -->
+          <div class="mb-6">
+            <p class="text-gray-700 font-medium mb-2">Resultados do Semestre considerados</p>
+            <div class="space-y-2">
+              <label class="flex items-center">
+                <input
+                  type="radio"
+                  formControlName="resultadosSemestre"
+                  value="Muito Satisfatório"
+                  class="form-radio h-4 w-4 text-blue-600"
+                />
+                <span class="ml-2 text-gray-700">Muito Satisfatório</span>
+              </label>
+              <label class="flex items-center">
+                <input
+                  type="radio"
+                  formControlName="resultadosSemestre"
+                  value="Satisfatório"
+                  class="form-radio h-4 w-4 text-blue-600"
+                />
+                <span class="ml-2 text-gray-700">Satisfatório</span>
+              </label>
+              <label class="flex items-center">
+                <input
+                  type="radio"
+                  formControlName="resultadosSemestre"
+                  value="Insatisfatório"
+                  class="form-radio h-4 w-4 text-blue-600"
+                />
+                <span class="ml-2 text-gray-700">Insatisfatório</span>
+              </label>
+            </div>
+            <div *ngIf="evaluationForm.get('resultadosSemestre').touched && evaluationForm.get('resultadosSemestre').invalid" class="text-red-500 text-sm mt-1">
+              Este campo é obrigatório.
+            </div>
+          </div>
+        
+          <!-- Considerações sobre a análise e alinhamentos -->
+          <div class="mb-6">
+            <label
+              for="consideracoesAnalise"
+              class="block text-gray-700 font-medium mb-2"
+            >
+              Considerações sobre a análise e alinhamentos
+            </label>
+            <textarea
+              id="consideracoesAnalise"
+              formControlName="consideracoesAnalise"
+              class="w-full h-24 p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            ></textarea>
+            <div *ngIf="evaluationForm.get('consideracoesAnalise').touched && evaluationForm.get('consideracoesAnalise').invalid" class="text-red-500 text-sm mt-1">
+              Este campo é obrigatório.
+            </div>
+          </div>
+        
+          <!-- Input oculto para manter o formControlName -->
+          <input type="hidden" formControlName="sixMonthAlignment" />
+        </div>
+        
+  
+        <button type="submit" 
+                class="w-48 mt-4 bg-blue-500 text-white font-semibold p-4 rounded-lg shadow-md hover:bg-blue-600 transition">
+          Enviar Avaliação
+        </button>
+      </form>
+  
+  
+      
+    </div>
+  </div>
+  
