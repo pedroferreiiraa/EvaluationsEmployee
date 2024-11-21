@@ -1,27 +1,28 @@
-import { CommonModule } from '@angular/common';
-import { Component, input, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService } from '../login/services/auth.service';
+import { Component, OnInit } from '@angular/core';
 import { DoLeaderEvaluationService } from './services/do-leader-evaluation.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { AuthService } from '../login/services/auth.service';
+import { CommonModule } from '@angular/common';
+
 
 @Component({
-  selector: 'app-do-leader-evaluation',
+  selector: 'app-do-user-evaluation',
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule, FormsModule],
   templateUrl: './do-leader-evaluation.component.html',
-  styleUrl: './do-leader-evaluation.component.scss'
+  styleUrls: ['./do-leader-evaluation.component.scss']
 })
-export class DoLeaderEvaluationComponent implements OnInit{
+export class DoLeaderEvaluationComponent implements OnInit {
   evaluationForm: FormGroup | any;
 
-  questions: any[] = [];
+  leaderQuestions: any[] = [];
   answers: { questionId: number; answerNumber: number }[] = [];
   userId: number = 0;
   status: number = 0;
   dateReference: string = '';
   evaluatorId: number | null = null;
-  employeeId: number | null = null;
+  leaderId: number | null = null;
 
   constructor(
     private evaluationService: DoLeaderEvaluationService,
@@ -31,15 +32,14 @@ export class DoLeaderEvaluationComponent implements OnInit{
     private http: Router
   ) {}
 
-
   ngOnInit(): void {
     this.userId = this.authService.getUserId();
   
     this.route.queryParams.subscribe(params => {
       this.evaluatorId = +params['evaluatorId'] || null;
-      this.employeeId = +params['employeeId'] || null;
+      this.leaderId = +params['leaderId'] || null;
       
-      console.log('Parâmetros recebidos:', { evaluatorId: this.evaluatorId, employeeId: this.employeeId });
+      console.log('Parâmetros recebidos:', { evaluatorId: this.evaluatorId, leaderId: this.leaderId });
     });
 
     // Inicialize o evaluationForm primeiro
@@ -55,7 +55,7 @@ export class DoLeaderEvaluationComponent implements OnInit{
       justificativaMetas: ['', Validators.required],
       resultadosSemestre: ['', Validators.required],
       consideracoesAnalise: ['', Validators.required],
-      answers: this.fb.array([], Validators.required)
+      leaderAnswers: this.fb.array([], Validators.required)
     });
     
   
@@ -73,7 +73,9 @@ export class DoLeaderEvaluationComponent implements OnInit{
   
     this.dateReference = `${this.formatDate(today)} até ${this.formatDate(sixMonthsFromToday)}`;
   }
+  
 
+  // Função para formatar a data no formato dd/mm/yyyy
   private formatDate(date: Date): string {
     const day = date.getDate().toString().padStart(2, '0'); // Dia com dois dígitos
     const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Mês com dois dígitos
@@ -81,81 +83,86 @@ export class DoLeaderEvaluationComponent implements OnInit{
     return `${day}/${month}/${year}`;
   }
 
+
   loadQuestions(): void {
     this.evaluationService.getQuestions().subscribe(
       (response: any) => {
-        this.questions = response.data;
-
-        const answersFormArray = this.evaluationForm.get('answers') as FormArray;
+        this.leaderQuestions = response.data;
+  
+        const answersFormArray = this.evaluationForm.get('leaderAnswers') as FormArray;
         answersFormArray.clear();
-
-        this.questions.forEach(() => {
+  
+        this.leaderQuestions.forEach(() => {
           answersFormArray.push(this.fb.control('', Validators.required));
         });
       },
       error => {
-        console.error('Erro ao carregar questões:', error)
+        console.error('Erro ao carregar questões:', error);
       }
     );
   }
+  
 
   submitEvaluation(): void {
     if (this.evaluationForm.invalid) {
       this.evaluationForm.markAllAsTouched();
       return;
     }
-
-    const employeeId = this.employeeId ?? this.userId;
+  
+    // Se employeeId e evaluatorId não foram passados, define-os como o ID do usuário logado (autoavaliação)
+    const leaderId = this.leaderId ?? this.userId;
     const evaluatorId = this.evaluatorId ?? this.userId;
-
-    if(employeeId === null || evaluatorId === null) {
-      console.error('EmployeeID ou EvaluatorID estão indefinidos');
+  
+    // Verifica novamente se employeeId e evaluatorId são válidos (após a definição para autoavaliação)
+    if (leaderId === null || evaluatorId === null) {
+      console.error('employeeId ou evaluatorId estão indefinidos');
       return;
     }
-
-    const answersFormArray = this.evaluationForm.get('answers') as FormArray;
-    const answers = this.questions.map((question, index) => ({
+  
+    // Coleta as respostas do FormArray
+    const answersFormArray = this.evaluationForm.get('leaderAnswers') as FormArray;
+    const answers = this.leaderQuestions.map((question, index) => ({
       questionId: question.questionId,
       answerNumber: answersFormArray.at(index).value
     }));
   
     const evaluationData = {
-      employeeId: employeeId,
+      leaderId: leaderId,
       evaluatorId: evaluatorId,
       status: this.status,
       dateReference: this.dateReference,
-      answers: answers,
+      leaderAnswers: answers,
       improvePoints: this.evaluationForm.get('improvePoints').value,
       pdi: this.evaluationForm.get('pdi').value,
       goals: this.evaluationForm.get('goals').value,
       sixMonthAlignment: this.evaluationForm.get('sixMonthAlignment').value
     };
-
+  
     this.evaluationService.submitEvaluation(evaluationData).subscribe(
       (response: any) => {
         console.log('Avaliação enviada com sucesso!', response);
         const evaluationId = response.data;
-
+  
         if (evaluationId) {
           this.completeEvaluation(evaluationId);
           this.http.navigate(['/home']);
         } else {
-          console.error('ID Da avaliação não encontrada na resposta do backend');
+          console.error('ID da avaliação não encontrado na resposta do backend.');
         }
       },
       error => {
-        console.error('Erro ao enviar avaliação', error);
+        console.error('Erro ao enviar avaliação:', error);
       }
     );
   }
-
+    
   completeEvaluation(evaluationId: number): void {
-    this.evaluationService.completeEvaluation(evaluationId).subscribe (
+    this.evaluationService.completeEvaluation(evaluationId).subscribe(
       () => {
         console.log('Avaliação marcada como completa!');
       },
       error => {
-        console.error('Erro ao marcar avaliação como completa', error);
+        console.error('Erro ao marcar avaliação como completa:', error);
       }
     );
   }
@@ -163,17 +170,18 @@ export class DoLeaderEvaluationComponent implements OnInit{
   updateAnswer(index: number, event: Event): void {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement.value;
-  
+
     if (value === '') return;
-  
+
     const answerNumber = Number(value);
-  
+
     if (index > -1 && index < this.answers.length) {
       this.answers[index].answerNumber = answerNumber;
-    } else {
-      console.error('Índice de resposta inválido:', index);
     }
   }
+
+
+
   updateSixMonthAlignment() {
     const alignmentData = this.evaluationForm.value;
   
@@ -198,7 +206,7 @@ export class DoLeaderEvaluationComponent implements OnInit{
   
     this.evaluationForm.get('sixMonthAlignment').setValue(sixMonthAlignmentValue, { emitEvent: false });
   }
-
+  
   private formatDateString(dateString: string): string {
     if (!dateString) return '';
     const date = new Date(dateString);
@@ -207,5 +215,5 @@ export class DoLeaderEvaluationComponent implements OnInit{
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   }
-
+  
 }

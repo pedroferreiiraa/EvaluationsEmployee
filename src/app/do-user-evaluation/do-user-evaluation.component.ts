@@ -180,14 +180,7 @@ export class DoUserEvaluationComponent implements OnInit {
     }
   }
 
-  private formatDateString(dateString: string): string {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
-  }
+
 
   updateSixMonthAlignment() {
     const alignmentData = this.evaluationForm.value;
@@ -214,5 +207,13 @@ export class DoUserEvaluationComponent implements OnInit {
     this.evaluationForm.get('sixMonthAlignment').setValue(sixMonthAlignmentValue, { emitEvent: false });
   }
   
+  private formatDateString(dateString: string): string {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
   
 }

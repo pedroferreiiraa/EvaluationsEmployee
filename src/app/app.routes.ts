@@ -25,8 +25,12 @@ export const APP_ROUTES: Routes = [
   },
   {
     path: 'do-leader-evaluation',
-    loadComponent: () => import('./do-leader-evaluation/do-leader-evaluation.component').then(l => l.DoLeaderEvaluationComponent)
+    loadComponent: () => import('./do-leader-evaluation /do-leader-evaluation.component').then(e => e.DoLeaderEvaluationComponent)
   },
+  // {
+  //   path: 'do-leader-evaluation',
+  //   loadComponent: () => import('./do-leader-evaluation-errado/do-leader-evaluation.component').then(l => l.DoLeaderEvaluationComponent)
+  // },
   {
     path: 'departments/:id',
     loadComponent: () => import('./departments/departments.component').then(d => d.DepartmentDetailComponent),
