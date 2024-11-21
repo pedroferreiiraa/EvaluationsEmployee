@@ -18,7 +18,6 @@ export class EvaluationsComponent implements OnInit {
   expandedDepartments: Set<number> = new Set();
   expandedUsers: Set<number> = new Set();
   
-
   constructor(
     private evaluationService: EvaluationsService,
     private departmentService: HomeDepartmentService,
@@ -40,14 +39,15 @@ export class EvaluationsComponent implements OnInit {
         console.log('Departamentos recebidos:', response); // Log dos dados recebidos
         this.departments = response.data;
   
-        // Filtra os usuários deletados e diferencia os líderes
+        // Filtra os usuários deletados, diferencia os líderes e ordena
         this.departments.forEach(department => {
           department.users = department.users
             .filter((user: any) => !user.isDeleted) // Exclui usuários deletados
             .map((user: any) => {
               user.isLeader = user.role === 'Lider'; // Adiciona flag para líderes
               return user;
-            });
+            })
+            .sort((a: any, b: any) => a.fullName.localeCompare(b.fullName)); // Ordena por nome
   
           // Inicializa o mapeamento de avaliações para os usuários restantes
           department.users.forEach((user: any) => {
@@ -68,10 +68,6 @@ export class EvaluationsComponent implements OnInit {
     );
   }
   
-  
-  
-  
-
   fetchEvaluations(): void {
     // Busca avaliações de usuários
     this.evaluationService.getUserEvaluations().subscribe(
@@ -99,8 +95,6 @@ export class EvaluationsComponent implements OnInit {
     );
   }
   
-  
-
   toggleDepartment(departmentId: number): void {
     if (this.expandedDepartments.has(departmentId)) {
       this.expandedDepartments.delete(departmentId);
@@ -117,6 +111,10 @@ export class EvaluationsComponent implements OnInit {
     this.router.navigate([`/user-details/${userId}`] );
   }
 
+  goToLeaderEvaluationDetails(userId: number): void {
+    this.router.navigate([`/leader-details/${userId}`])
+  }
+
   hasEvaluationsInDepartment(department: any): boolean {
     const hasEvaluations = department.users.some((user: any) => {
       const evaluations = this.evaluationsByUser[user.id] || [];
@@ -130,7 +128,8 @@ export class EvaluationsComponent implements OnInit {
   
   private mapEvaluationsToUsers(evaluations: any[]): void {
     evaluations.forEach(evaluation => {
-      const userId = evaluation.employeeId;
+      console.log('Avaliação recebida:', evaluation); // Log para depuração
+      const userId = evaluation.employeeId || evaluation.leaderId; // Verificar qual ID deve ser usado
   
       if (!this.evaluationsByUser[userId]) {
         this.evaluationsByUser[userId] = [];
@@ -139,6 +138,7 @@ export class EvaluationsComponent implements OnInit {
       this.evaluationsByUser[userId].push(evaluation);
     });
   }
+  
 
   rollbackPage(): void {
     this.router.navigate(['/home']);

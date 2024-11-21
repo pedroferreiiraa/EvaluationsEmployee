@@ -74,4 +74,11 @@ export class EditUserComponent implements OnInit {
       }
     );
   }
+
+
+  rollbackPage(): void {
+    this.router.navigate(['/departments', this.user.departmentId]);
+  }
+
+
 }

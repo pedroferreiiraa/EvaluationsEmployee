@@ -53,6 +53,13 @@
         >
           📝 <span>Avaliar</span>
         </button>
+        <button
+          *ngIf="isGestor"
+          class="flex items-center gap-1 px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 active:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-300"
+          (click)="goToLeaderEvaluation(user.id)"
+        >
+          📝 <span>Avaliar</span>
+        </button>
         </div>
       </td>
     </ng-container>

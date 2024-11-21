@@ -44,6 +44,10 @@ export const APP_ROUTES: Routes = [
     loadComponent: () => import('./user-details/user-details.component').then(u => u.UserEvaluationsComponent)
   },
   {
+    path: 'leader-details/:id',
+    loadComponent: () => import('./leader-details/leader-details.component').then(l => l.LeaderDetailsComponent)
+  },
+  {
     path: 'edit-user/:id',
     loadComponent: () => import('./edit-user/edit-user.component').then(e => e.EditUserComponent)
   },

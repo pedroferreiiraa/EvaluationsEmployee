@@ -45,6 +45,11 @@ export class AddUserComponent implements OnInit {
     });
   }
 
+  rollbackPage(): void {
+    this.router.navigate(['/home']);
+  }
+
+
   fetchDepartments(): void {
     this.homeDepartmentService.getDepartments().subscribe(
       (response: any) => {

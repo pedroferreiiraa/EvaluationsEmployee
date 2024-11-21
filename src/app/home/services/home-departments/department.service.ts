@@ -19,6 +19,10 @@ export class HomeDepartmentService {
     );
   }
 
+  getAllDepartments(): Observable<any> {
+    return this.http.get(`${this.apiUrl}`); // Substitua pelo endpoint correto
+  }
+
   // Busca os detalhes do departamento e filtra usuários com isDeleted = false
   getDepartmentDetails(departmentId: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${departmentId}`).pipe(

@@ -41,13 +41,15 @@ export class HomeComponent implements OnInit {
     
     if (this.userRole === 'RH') {
       this.fetchCompletedEvaluations();
+      this.fetchDepartments();
+
+    } if (this.userRole === 'Gestor') {
+      this.fetchGestorDepartments(userId);
     }
-    
     if (this.hasRole('Lider')) {
       this.fetchLeaderDepartments(userId);
-    } else {
-      this.fetchDepartments();
-    }
+    } 
+  
   }
   
   
@@ -74,6 +76,18 @@ export class HomeComponent implements OnInit {
         console.error('Erro ao buscar departamentos para líder:', error);
       }
     );
+  }
+
+  fetchGestorDepartments(userId: number): void {
+    this.departmentService.getDepartments().subscribe (
+      (response: { data: Department[] }) => {
+        this.allDepartments = response.data.filter(department => department.gestorId === Number(userId));
+        console.log("Departamentos que o usuário é gestor:", this.allDepartments)
+      }, 
+      (error: any) => {
+        console.error('Erro ao buscar departamentos para o gestor', error)
+      }
+    )
   }
   
   fetchUserDetails(userId: number): void {

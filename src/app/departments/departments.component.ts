@@ -24,6 +24,7 @@ export class DepartmentDetailComponent implements OnInit {
   displayedColumns: string[] = ['fullName', 'role', 'typeMo', 'codFuncionario', 'actions'];
   isLeader: boolean = false;
   isRh: boolean = false;
+  isGestor: boolean = false;
   leaderUserId: number | null = null;
 
 
@@ -41,6 +42,9 @@ export class DepartmentDetailComponent implements OnInit {
     this.departmentId = Number(this.route.snapshot.paramMap.get('id'));
     this.isLeader = this.authService.getRole() === 'Lider';
     this.isRh = this.authService.getRole() === 'RH';
+    this.isGestor = this.authService.getRole() === 'Gestor';
+
+    
     this.leaderUserId = this.authService.getUserId(); // Obtém o userId do líder logado
 
     if (this.departmentId) {
@@ -54,14 +58,26 @@ export class DepartmentDetailComponent implements OnInit {
         const departmentData = response.data;
   
         // Filtra usuários não deletados
-        const filteredUsers = departmentData.users.filter((user: any) => !user.isDeleted);
+        let filteredUsers = departmentData.users.filter((user: any) => !user.isDeleted);
   
         this.departmentName = departmentData.name;
         this.leaderId = departmentData.liderId;
         this.managerId = departmentData.gestorId;
   
-        // Mapeia apenas os usuários não deletados
-        this.users = filteredUsers.map((user: { evaluationDate: any; }) => ({
+        // Se o usuário for gestor, filtra apenas os líderes
+        if (this.isGestor) {
+          filteredUsers = filteredUsers.filter((user: any) => user.role === 'Lider');
+        }
+
+        if (this.isLeader) {
+          filteredUsers = filteredUsers.filter((user: any) => user.role === 'Colaborador')
+        }
+
+        filteredUsers.sort((a: any, b: any) => a.fullName.localeCompare(b.fullName));
+
+  
+        // Mapeia os usuários filtrados
+        this.users = filteredUsers.map((user: { evaluationDate: any }) => ({
           ...user,
           isEvaluated: !!user.evaluationDate, // Suponha que evaluationDate indica se já foi avaliado
           evaluationDate: user.evaluationDate || null
@@ -72,7 +88,8 @@ export class DepartmentDetailComponent implements OnInit {
       }
     );
   }
-
+  
+  
   
   goToUserEvaluation(employeeId: number): void {
     console.log('Redirecionando para avaliação:', { evaluatorId: this.leaderUserId, employeeId });
@@ -81,6 +98,12 @@ export class DepartmentDetailComponent implements OnInit {
     this.router.navigate(['/do-user-evaluation'], { 
       queryParams: { evaluatorId: this.leaderUserId, employeeId }
     });
+  }
+
+  goToLeaderEvaluation(leaderId: number): void {
+    this.router.navigate(['/do-leader-evaluation'], {
+      queryParams: { evaluatorId: this.leaderUserId, leaderId}
+    })
   }
 
   evaluateUser(userId: number): void {

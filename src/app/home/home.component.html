@@ -77,4 +77,34 @@
 
 </div>
 
+<div *ngIf="hasRole('Gestor')">
+  <div class="px-40 bg-white p-6 rounded-lg shadow-md mt-4">
+    <div class="flex justify-between items-center mb-4">
+      <p class="font-sans text-3xl text-gray-700">Bem-vindo, {{ userDetails.fullName }}</p>
+    </div>
+    <a href="do-leader-evaluation" class="px-4 p-2 mt-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition mr-2">
+      Clique aqui para realizar a avaliação
+    </a>
+  </div>
+
+  <div class="px-40 bg-white p-6 rounded-lg shadow-md mt-8">
+    <div class="flex justify-between items-center mb-4">
+      <p class="font-sans text-3xl text-gray-700">Departamentos onde sou gestor:</p>
+    </div>
+    <ul class="flex flex-wrap gap-x-4">
+      <li *ngFor="let department of allDepartments" class="mb-2 flex flex-col items-start">
+        <p class="font-semibold">{{ department.name }}</p>
+        <button
+          (click)="goToDepartment(department.id)"
+          class="px-4 py-2 mt-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition"
+        >
+          Ver detalhes do setor
+        </button>
+      </li>
+    </ul>
+  </div>
+  
+
+</div>
+
 </div>

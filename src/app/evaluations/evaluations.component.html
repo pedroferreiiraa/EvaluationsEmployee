@@ -29,7 +29,7 @@
           <ng-container *ngIf="user && user.id && getCompletedEvaluationsCount(user.id) > 0">
             <div 
               class="p-4 bg-gray-50 rounded-lg shadow cursor-pointer hover:bg-gray-100 transition" 
-              (click)="goToUserDetails(user.id)"
+              (click)="user.isLeader ? goToLeaderEvaluationDetails(user.id) : goToUserDetails(user.id)"
             >
               <p class="text-md font-semibold text-gray-700">
                 Colaborador: {{ user.fullName || 'Nome não informado' }}
@@ -41,6 +41,7 @@
             </div>
           </ng-container>
         </div>
+        
       </ng-container>
       
       <p *ngIf="!hasEvaluationsInDepartment(department)" class="text-md text-gray-500 mt-2">

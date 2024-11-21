@@ -43,10 +43,10 @@ interface EvaluationResponse {
   selector: 'app-user-evaluations',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './user-details.component.html',
-  styleUrl: './user-details.component.scss'
+  templateUrl: './leader-details.component.html',
+  styleUrl: './leader-details.component.scss'
 })
-export class UserEvaluationsComponent implements OnInit {
+export class LeaderDetailsComponent implements OnInit {
   selfEvaluations: EvaluationData[] = [];
   leaderEvaluations: EvaluationData[] = [];
   otherEvaluations: EvaluationData[] = [];
@@ -68,11 +68,6 @@ export class UserEvaluationsComponent implements OnInit {
     });
   }
 
-  rollbackPage(): void {
-    this.router.navigate(['/evaluations']);
-  }
-
-
   fetchUserInfo(): void {
     this.http.get<User>(`http://localhost:5001/api/users/${this.userId}`).subscribe(user => {
       this.user = user;
@@ -89,7 +84,7 @@ export class UserEvaluationsComponent implements OnInit {
   }
 
   fetchSelfEvaluations(): void {
-    this.http.get<EvaluationResponse>(`http://localhost:5001/api/userAvaliations/self/${this.userId}`)
+    this.http.get<EvaluationResponse>(`http://localhost:5001/api/leaderAvaliations/self/${this.userId}`)
       .subscribe(response => {
         if (response.isSuccess && response.data) {
           // Filtra para pegar as autoavaliações corretamente, considerando o caso de líder
@@ -117,7 +112,7 @@ export class UserEvaluationsComponent implements OnInit {
 
 
   fetchOtherEvaluations(): void {
-  this.http.get<EvaluationResponse>(`http://localhost:5001/api/userAvaliations/others/${this.userId}`)
+  this.http.get<EvaluationResponse>(`http://localhost:5001/api/leaderAvaliations/others/${this.userId}`)
     .subscribe(response => {
       if (response.isSuccess && response.data) {
         // Filtra para pegar avaliações de outros, excluindo autoavaliações e avaliações do líder
@@ -130,6 +125,10 @@ export class UserEvaluationsComponent implements OnInit {
     });
 }
   
+
+rollbackPage(): void {
+  this.router.navigate(['/evaluations']);
+}
 
 
   processSixMonthAlignment(text: string) {
