@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
@@ -54,7 +54,13 @@ export class UserEvaluationsComponent implements OnInit {
   userId: number | undefined;
   user: User | undefined;
 
-  constructor(private route: ActivatedRoute, private http: HttpClient, private router: Router) {}
+  constructor(private route: ActivatedRoute, 
+    private http: HttpClient,
+    private router: Router,
+    private renderer: Renderer2, 
+    private el: ElementRef
+    
+    ) {}
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
@@ -151,4 +157,37 @@ export class UserEvaluationsComponent implements OnInit {
       return null;
     }
   }
+
+  printEvaluation(type: 'user' | 'leader'): void {
+    const elementId = type === 'user' ? 'userEvaluation' : 'leaderEvaluation';
+    const printContents = document.getElementById(elementId)?.innerHTML;
+
+    if (printContents) {
+      const printWindow = window.open('', '_blank', 'width=800,height=600');
+      if (printWindow) {
+        printWindow.document.open();
+        printWindow.document.write(`
+          <html>
+            <head>
+              <title>Imprimir Avaliação</title>
+              <style>
+                body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+                .text-gray-800 { color: #2d3748; }
+                .text-gray-700 { color: #4a5568; }
+                /* Adicione mais estilos conforme necessário */
+              </style>
+            </head>
+            <body onload="window.print(); window.close();">
+              ${printContents}
+            </body>
+          </html>
+        `);
+        printWindow.document.close();
+      }
+    } else {
+      console.error('Elemento não encontrado para impressão.');
+    }
+  }
+
+
 }
