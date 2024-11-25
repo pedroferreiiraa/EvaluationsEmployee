@@ -44,25 +44,25 @@ export class DoUserEvaluationComponent implements OnInit {
 
     // Inicialize o evaluationForm primeiro
     this.evaluationForm = this.fb.group({
-      improvePoints: ['', Validators.required],
-      pdi: ['', Validators.required],
-      goals: ['', Validators.required],
-      sixMonthAlignment: ['', Validators.required],
-      date: ['', Validators.required],
-      planoAndamento: ['', Validators.required],
-      justificativaPlano: ['', Validators.required],
-      metasAndamento: ['', Validators.required],
-      justificativaMetas: ['', Validators.required],
-      resultadosSemestre: ['', Validators.required],
-      consideracoesAnalise: ['', Validators.required],
+      // improvePoints: ['', Validators.required],
+      // pdi: ['', Validators.required],
+      // goals: ['', Validators.required],
+      // sixMonthAlignment: ['', Validators.required],
+      // date: ['', Validators.required],
+      // planoAndamento: ['', Validators.required],
+      // justificativaPlano: ['', Validators.required],
+      // metasAndamento: ['', Validators.required],
+      // justificativaMetas: ['', Validators.required],
+      // resultadosSemestre: ['', Validators.required],
+      // consideracoesAnalise: ['', Validators.required],
       answers: this.fb.array([], Validators.required)
     });
     
   
     // Agora você pode se inscrever em valueChanges
-    this.evaluationForm.valueChanges.subscribe(() => {
-      this.updateSixMonthAlignment();
-    });
+    // this.evaluationForm.valueChanges.subscribe(() => {
+    //   this.updateSixMonthAlignment();
+    // });
   
     this.loadQuestions();
   
@@ -132,10 +132,10 @@ export class DoUserEvaluationComponent implements OnInit {
       status: this.status,
       dateReference: this.dateReference,
       answers: answers,
-      improvePoints: this.evaluationForm.get('improvePoints').value,
-      pdi: this.evaluationForm.get('pdi').value,
-      goals: this.evaluationForm.get('goals').value,
-      sixMonthAlignment: this.evaluationForm.get('sixMonthAlignment').value
+      // improvePoints: this.evaluationForm.get('improvePoints').value,
+      // pdi: this.evaluationForm.get('pdi').value,
+      // goals: this.evaluationForm.get('goals').value,
+      // sixMonthAlignment: this.evaluationForm.get('sixMonthAlignment').value
     };
   
     this.evaluationService.submitEvaluation(evaluationData).subscribe(
@@ -182,30 +182,30 @@ export class DoUserEvaluationComponent implements OnInit {
 
 
 
-  updateSixMonthAlignment() {
-    const alignmentData = this.evaluationForm.value;
+  // updateSixMonthAlignment() {
+  //   const alignmentData = this.evaluationForm.value;
   
-    const sixMonthAlignmentValue = `
-  ALINHAMENTO SEMESTRAL (Considerações)
+  //   const sixMonthAlignmentValue = `
+  // ALINHAMENTO SEMESTRAL (Considerações)
   
-  Data: ${this.formatDateString(alignmentData.date)}
+  // Data: ${this.formatDateString(alignmentData.date)}
   
-  Plano de melhoria traçado está em andamento? ${alignmentData.planoAndamento}
-  Justificativa:
-  ${alignmentData.justificativaPlano}
+  // Plano de melhoria traçado está em andamento? ${alignmentData.planoAndamento}
+  // Justificativa:
+  // ${alignmentData.justificativaPlano}
   
-  Metas estabelecidas estão em andamento? ${alignmentData.metasAndamento}
-  Justifique:
-  ${alignmentData.justificativaMetas}
+  // Metas estabelecidas estão em andamento? ${alignmentData.metasAndamento}
+  // Justifique:
+  // ${alignmentData.justificativaMetas}
   
-  Resultados do Semestre considerados: ${alignmentData.resultadosSemestre}
+  // Resultados do Semestre considerados: ${alignmentData.resultadosSemestre}
   
-  Considerações sobre a análise e alinhamentos:
-  ${alignmentData.consideracoesAnalise}
-    `;
+  // Considerações sobre a análise e alinhamentos:
+  // ${alignmentData.consideracoesAnalise}
+  //   `;
   
-    this.evaluationForm.get('sixMonthAlignment').setValue(sixMonthAlignmentValue, { emitEvent: false });
-  }
+  //   this.evaluationForm.get('sixMonthAlignment').setValue(sixMonthAlignmentValue, { emitEvent: false });
+  // }
   
   private formatDateString(dateString: string): string {
     if (!dateString) return '';

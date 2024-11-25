@@ -54,7 +54,13 @@ export class LeaderDetailsComponent implements OnInit {
   userId: number | undefined;
   user: User | undefined;
 
-  constructor(private route: ActivatedRoute, private http: HttpClient, private router: Router) {}
+  constructor(
+    private route: ActivatedRoute, 
+    private http: HttpClient,
+    private router: Router,
+  
+     
+    ) {}
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
@@ -123,13 +129,34 @@ export class LeaderDetailsComponent implements OnInit {
     }, error => {
       console.error('Erro ao carregar as avaliações de outros:', error);
     });
-}
+  }
   
 
-rollbackPage(): void {
-  this.router.navigate(['/evaluations']);
-}
+  rollbackPage(): void {
+    this.router.navigate(['/evaluations']);
+  }
 
+  printEvaluation(type: 'leader' | 'gestor'): void {
+    const elementId = type === 'leader' ? 'leaderEvaluation' : 'gestorEvaluation';
+    const printContents = document.getElementById(elementId)?.innerHTML;
+
+    if (printContents) {
+      const printWindow = window.open('', '_blank', 'width=800,height=600');
+      if (printWindow) {
+        printWindow.document.open();
+        printWindow.document.write(`
+          <html>
+            <body onload="window.print(); window.close();">
+              ${printContents}
+            </body>
+          </html>
+        `);
+        printWindow.document.close();
+      }
+    } else {
+      console.error('Elemento não encontrado para impressão.');
+    }
+  }
 
   processSixMonthAlignment(text: string) {
     const regex = /Data:\s*(.*)\s*Plano de melhoria traçado está em andamento\?\s*(.*)\s*Justificativa:\s*(.*)\s*Metas estabelecidas estão em andamento\?\s*(.*)\s*Justifique:\s*(.*)\s*Resultados do Semestre considerados:\s*(.*)\s*Considerações sobre a análise e alinhamentos:\s*(.*)/;

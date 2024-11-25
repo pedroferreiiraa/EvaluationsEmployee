@@ -20,8 +20,8 @@
   </button>
 
   <div class="mt-1" >
-      <p class="text-lg text-gray-800"><strong>Nome Completo:</strong> {{ user.fullName }}</p>
-      <p class="text-lg text-gray-800"><strong>Código do Colaborador:</strong> {{ user.codFuncionario }}</p>
+      <p class="text-lg text-gray-800"><strong>Colaborador: </strong> {{ user.fullName }}</p>
+      <p class="text-lg text-gray-800"><strong>Código:</strong> {{ user.codFuncionario }}</p>
     </div>
   </div>
 
@@ -30,13 +30,12 @@
     <!-- Exibir as autoavaliações -->
     <div *ngIf="selfEvaluations.length > 0" id="userEvaluation" class="w-full">
       <p class="hidden">Colaborador: {{ user.fullName}}</p>
-      <h3 class="text-lg font-semibold text-gray-700 mb-4">Autoavaliação</h3>
+      <!-- <h3 class="text-lg font-semibold text-gray-700 mb-4 print:hidden" >Autoavaliação</h3> -->
       <div class="grid grid-cols-1 gap-4">
         <div *ngFor="let evaluation of selfEvaluations" class="p-4 bg-gray-50 rounded-lg shadow cursor-pointer hover:bg-gray-100 transition">
           <p><strong>Período de Referência:</strong> {{ evaluation.dateReference }}</p>
-
-          <div class="mt-4 space-y-4">
-            <h4 class="text-md font-semibold text-gray-700 mt-4">Médias dos Tópicos:</h4>
+          <div class="">
+            <h4 class="text-md font-semibold text-gray-700">Médias dos Tópicos:</h4>
             <ul>
               <li *ngFor="let topic of evaluation.topicAverages">
                 {{ topic.topic }}: Média {{ topic.average }}
@@ -97,9 +96,114 @@
               </div>
             </div> -->
             
-            <div *ngIf="!evaluation.sixMonthAlignment">
+            <!-- <div *ngIf="!evaluation.sixMonthAlignment">
               <p class="text-md text-gray-700">Alinhamento Semestral: Sem dados disponíveis.</p>
+            </div> -->
+
+            <div class="hidden print:block border border-gray-300 p-4">
+              <!-- Pontos de Melhoria e PDI -->
+              <div class="grid grid-cols-2 gap-4 mb-2">
+                <div>
+                  <h5 class="font-bold text-gray-700">PONTOS DE MELHORIA</h5>
+                  <ol class="list-decimal pl-5 space-y-2">
+                    <li><input type="text" class="w-full border border-gray-300 rounded p-2" placeholder="" /></li>
+                    <li><input type="text" class="w-full border border-gray-300 rounded p-2" placeholder="" /></li>
+                    <li><input type="text" class="w-full border border-gray-300 rounded p-2" placeholder="" /></li>
+                    <li><input type="text" class="w-full border border-gray-300 rounded p-2" placeholder="" /></li>
+                    <li><input type="text" class="w-full border border-gray-300 rounded p-2" placeholder="" /></li>
+                  </ol>
+                </div>
+                <div>
+                  <h5 class="font-bold text-gray-700">PDI - PLANO DE DESENVOLVIMENTO INDIVIDUAL</h5>
+                  <ol class="list-decimal pl-5 space-y-2">
+                    <li><input type="text" class="w-full border border-gray-300 rounded p-2" placeholder="" /></li>
+                    <li><input type="text" class="w-full border border-gray-300 rounded p-2" placeholder="" /></li>
+                    <li><input type="text" class="w-full border border-gray-300 rounded p-2" placeholder="" /></li>
+                    <li><input type="text" class="w-full border border-gray-300 rounded p-2" placeholder="" /></li>
+                    <li><input type="text" class="w-full border border-gray-300 rounded p-2" placeholder="" /></li>
+                  </ol>
+                </div>
+              </div>
+            
+              <!-- Metas -->
+              <div class="mb-6">
+                <h5 class="font-bold text-gray-700 mb-2">METAS</h5>
+                <table class="w-full border-collapse border border-gray-300">
+                  <thead>
+                    <tr>
+                      <th class="border border-gray-300 p-2">ORD</th>
+                      <th class="border border-gray-300 p-2">METAS</th>
+                      <th class="border border-gray-300 p-2">PRAZO</th>
+                      <th class="border border-gray-300 p-2">STATUS</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="border border-gray-300 p-2 text-center">1</td>
+                      <td class="border border-gray-300 p-2"><input type="text" class="w-full border-none" placeholder="" /></td>
+                      <td class="border border-gray-300 p-2"><input type="text" class="w-full border-none" placeholder="" /></td>
+                      <td class="border border-gray-300 p-2"><input type="text" class="w-full border-none" placeholder="" /></td>
+                    </tr>
+                    <tr>
+                      <td class="border border-gray-300 p-2 text-center">2</td>
+                      <td class="border border-gray-300 p-2"><input type="text" class="w-full border-none" placeholder="" /></td>
+                      <td class="border border-gray-300 p-2"><input type="text" class="w-full border-none" placeholder="" /></td>
+                      <td class="border border-gray-300 p-2"><input type="text" class="w-full border-none" placeholder="" /></td>
+                    </tr>
+                    <tr>
+                      <td class="border border-gray-300 p-2 text-center">3</td>
+                      <td class="border border-gray-300 p-2"><input type="text" class="w-full border-none" placeholder="" /></td>
+                      <td class="border border-gray-300 p-2"><input type="text" class="w-full border-none" placeholder="" /></td>
+                      <td class="border border-gray-300 p-2"><input type="text" class="w-full border-none" placeholder="" /></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            
+              <!-- Alinhamento Semestral -->
+              <div>
+                <h3 class="font-bold text-gray-700 mb-2">ALINHAMENTO SEMESTRAL</h3>
+                <div class="mb-4">
+                  <label class="block text-sm text-gray-700 mb-1">Data:</label>
+                  <input type="text" class="w-full border border-gray-300 rounded p-2" />
+                </div>
+                <div class="mb-4">
+                  <label class="block text-sm text-gray-700 mb-1">Plano de melhoria traçado está em andamento?</label>
+                  <div class="flex items-center space-x-4">
+                    <label class="flex items-center space-x-2">
+                      <input type="radio" name="improvementPlan" value="sim" />
+                      <span>SIM</span>
+                    </label>
+                    <label class="flex items-center space-x-2">
+                      <input type="radio" name="improvementPlan" value="nao" />
+                      <span>NÃO</span>
+                    </label>
+                  </div>
+                 
+                </div>
+                <div class="mb-4">
+                  <label class="block text-sm text-gray-700 mb-1">Metas estabelecidas estão em andamento?</label>
+                  <div class="flex items-center space-x-4">
+                    <label class="flex items-center space-x-2">
+                      <input type="radio" name="goals" value="sim" />
+                      <span>SIM</span>
+                    </label>
+                    <label class="flex items-center space-x-2">
+                      <input type="radio" name="goals" value="nao" />
+                      <span>NÃO</span>
+                    </label>
+                  </div>
+                 
+                </div>
+                <!-- <div>
+                  <label class="block text-sm text-gray-700 mb-1">Considerações sobre a análise e alinhamentos:</label>
+                
+                </div> -->
+              </div>
+              
+
             </div>
+            
           </div>
         </div>
       </div>
@@ -109,17 +213,121 @@
     <div *ngIf="otherEvaluations.length > 0; else noLeaderEvaluations" id="leaderEvaluation" class="w-full">
 
       <p class="hidden">Líder avaliando o colaborador: {{ user.fullName }} </p>
-      <h3 class="text-lg font-semibold text-gray-700 mb-4">Avaliações dos Líderes</h3>
+      <!-- <h3 class="text-lg font-semibold text-gray-700 mb-4">Avaliações dos Líderes</h3> -->
       <div class="grid grid-cols-1 gap-4">
         <div *ngFor="let evaluation of otherEvaluations" class="p-4 bg-gray-50 rounded-lg shadow cursor-pointer hover:bg-gray-100 transition">
           <p><strong>Período de Referência:</strong> {{ evaluation.dateReference }}</p>
 
-          <h4 class="text-md font-semibold text-gray-700 mt-4">Médias dos Tópicos:</h4>
+          <h4 class="text-md font-semibold text-gray-700">Médias dos Tópicos:</h4>
           <ul>
             <li *ngFor="let topic of evaluation.topicAverages">
               {{ topic.topic }}: Média {{ topic.average }}
             </li>
           </ul>
+
+          <div class="hidden print:block border border-gray-300 p-4">
+            <!-- Pontos de Melhoria e PDI -->
+            <div class="grid grid-cols-2 gap-4 mb-2">
+              <div>
+                <h5 class="font-bold text-gray-700">PONTOS DE MELHORIA</h5>
+                <ol class="list-decimal pl-5 space-y-2">
+                  <li><input type="text" class="w-full border border-gray-300 rounded p-2" placeholder="" /></li>
+                  <li><input type="text" class="w-full border border-gray-300 rounded p-2" placeholder="" /></li>
+                  <li><input type="text" class="w-full border border-gray-300 rounded p-2" placeholder="" /></li>
+                  <li><input type="text" class="w-full border border-gray-300 rounded p-2" placeholder="" /></li>
+                  <li><input type="text" class="w-full border border-gray-300 rounded p-2" placeholder="" /></li>
+                </ol>
+              </div>
+              <div>
+                <h5 class="font-bold text-gray-700">PDI - PLANO DE DESENVOLVIMENTO INDIVIDUAL</h5>
+                <ol class="list-decimal pl-5 space-y-2">
+                  <li><input type="text" class="w-full border border-gray-300 rounded p-2" placeholder="" /></li>
+                  <li><input type="text" class="w-full border border-gray-300 rounded p-2" placeholder="" /></li>
+                  <li><input type="text" class="w-full border border-gray-300 rounded p-2" placeholder="" /></li>
+                  <li><input type="text" class="w-full border border-gray-300 rounded p-2" placeholder="" /></li>
+                  <li><input type="text" class="w-full border border-gray-300 rounded p-2" placeholder="" /></li>
+                </ol>
+              </div>
+            </div>
+          
+            <!-- Metas -->
+            <div class="mb-6">
+              <h5 class="font-bold text-gray-700 mb-2">METAS</h5>
+              <table class="w-full border-collapse border border-gray-300">
+                <thead>
+                  <tr>
+                    <th class="border border-gray-300 p-2">ORD</th>
+                    <th class="border border-gray-300 p-2">METAS</th>
+                    <th class="border border-gray-300 p-2">PRAZO</th>
+                    <th class="border border-gray-300 p-2">STATUS</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="border border-gray-300 p-2 text-center">1</td>
+                    <td class="border border-gray-300 p-2"><input type="text" class="w-full border-none" placeholder="" /></td>
+                    <td class="border border-gray-300 p-2"><input type="text" class="w-full border-none" placeholder="" /></td>
+                    <td class="border border-gray-300 p-2"><input type="text" class="w-full border-none" placeholder="" /></td>
+                  </tr>
+                  <tr>
+                    <td class="border border-gray-300 p-2 text-center">2</td>
+                    <td class="border border-gray-300 p-2"><input type="text" class="w-full border-none" placeholder="" /></td>
+                    <td class="border border-gray-300 p-2"><input type="text" class="w-full border-none" placeholder="" /></td>
+                    <td class="border border-gray-300 p-2"><input type="text" class="w-full border-none" placeholder="" /></td>
+                  </tr>
+                  <tr>
+                    <td class="border border-gray-300 p-2 text-center">3</td>
+                    <td class="border border-gray-300 p-2"><input type="text" class="w-full border-none" placeholder="" /></td>
+                    <td class="border border-gray-300 p-2"><input type="text" class="w-full border-none" placeholder="" /></td>
+                    <td class="border border-gray-300 p-2"><input type="text" class="w-full border-none" placeholder="" /></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          
+            <!-- Alinhamento Semestral -->
+            <div>
+              <h3 class="font-bold text-gray-700 mb-2">ALINHAMENTO SEMESTRAL</h3>
+              <div class="mb-4">
+                <label class="block text-sm text-gray-700 mb-1">Data:</label>
+                <input type="text" class="w-full border border-gray-300 rounded p-2" />
+              </div>
+              <div class="mb-4">
+                <label class="block text-sm text-gray-700 mb-1">Plano de melhoria traçado está em andamento?</label>
+                <div class="flex items-center space-x-4">
+                  <label class="flex items-center space-x-2">
+                    <input type="radio" name="improvementPlan" value="sim" />
+                    <span>SIM</span>
+                  </label>
+                  <label class="flex items-center space-x-2">
+                    <input type="radio" name="improvementPlan" value="nao" />
+                    <span>NÃO</span>
+                  </label>
+                </div>
+               
+              </div>
+              <div class="mb-4">
+                <label class="block text-sm text-gray-700 mb-1">Metas estabelecidas estão em andamento?</label>
+                <div class="flex items-center space-x-4">
+                  <label class="flex items-center space-x-2">
+                    <input type="radio" name="goals" value="sim" />
+                    <span>SIM</span>
+                  </label>
+                  <label class="flex items-center space-x-2">
+                    <input type="radio" name="goals" value="nao" />
+                    <span>NÃO</span>
+                  </label>
+                </div>
+               
+              </div>
+              <!-- <div>
+                <label class="block text-sm text-gray-700 mb-1">Considerações sobre a análise e alinhamentos:</label>
+              
+              </div> -->
+            </div>
+            
+            
+          </div>
 
           <!-- <div class="mt-4 space-y-4">
             <div>

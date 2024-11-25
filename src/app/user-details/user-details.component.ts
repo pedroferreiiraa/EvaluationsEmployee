@@ -57,8 +57,7 @@ export class UserEvaluationsComponent implements OnInit {
   constructor(private route: ActivatedRoute, 
     private http: HttpClient,
     private router: Router,
-    private renderer: Renderer2, 
-    private el: ElementRef
+
     
     ) {}
 
@@ -168,15 +167,6 @@ export class UserEvaluationsComponent implements OnInit {
         printWindow.document.open();
         printWindow.document.write(`
           <html>
-            <head>
-              <title>Imprimir Avaliação</title>
-              <style>
-                body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
-                .text-gray-800 { color: #2d3748; }
-                .text-gray-700 { color: #4a5568; }
-                /* Adicione mais estilos conforme necessário */
-              </style>
-            </head>
             <body onload="window.print(); window.close();">
               ${printContents}
             </body>
