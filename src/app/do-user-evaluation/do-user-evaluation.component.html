@@ -43,7 +43,7 @@
       <div formArrayName="answers">
         <div *ngFor="let question of questions; let i = index" class="mb-4">
           <label [for]="'question-' + question.id" class="block text-gray-700 font-medium mb-2">
-            {{ question.text }} {{ question.topic }}
+            {{ question.text }} 
           </label>
           <input 
             type="number" 
