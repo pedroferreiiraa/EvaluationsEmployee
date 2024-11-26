@@ -75,7 +75,7 @@ export class LeaderDetailsComponent implements OnInit {
   }
 
   fetchUserInfo(): void {
-    this.http.get<User>(`http://localhost:5001/api/users/${this.userId}`).subscribe(user => {
+    this.http.get<User>(`http://192.168.16.194:5001/api/users/${this.userId}`).subscribe(user => {
       this.user = user;
     });
   }
@@ -90,7 +90,7 @@ export class LeaderDetailsComponent implements OnInit {
   }
 
   fetchSelfEvaluations(): void {
-    this.http.get<EvaluationResponse>(`http://localhost:5001/api/leaderAvaliations/self/${this.userId}`)
+    this.http.get<EvaluationResponse>(`http://192.168.16.194:5001/api/leaderAvaliations/self/${this.userId}`)
       .subscribe(response => {
         if (response.isSuccess && response.data) {
           // Filtra para pegar as autoavaliações corretamente, considerando o caso de líder
@@ -104,7 +104,7 @@ export class LeaderDetailsComponent implements OnInit {
   }
 
   fetchLeaderEvaluations(): void {
-    this.http.get<EvaluationResponse>(`http://localhost:5001/api/leaderAvaliations`)
+    this.http.get<EvaluationResponse>(`http://192.168.16.194:5001/api/leaderAvaliations`)
       .subscribe(response => {
         if (response.isSuccess && response.data) {
           // Filtra as avaliações feitas pelos líderes, se necessário
@@ -118,7 +118,7 @@ export class LeaderDetailsComponent implements OnInit {
 
 
   fetchOtherEvaluations(): void {
-  this.http.get<EvaluationResponse>(`http://localhost:5001/api/leaderAvaliations/others/${this.userId}`)
+  this.http.get<EvaluationResponse>(`http://192.168.16.194:5001/api/leaderAvaliations/others/${this.userId}`)
     .subscribe(response => {
       if (response.isSuccess && response.data) {
         // Filtra para pegar avaliações de outros, excluindo autoavaliações e avaliações do líder

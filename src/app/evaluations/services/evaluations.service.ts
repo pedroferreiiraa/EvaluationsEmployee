@@ -6,8 +6,8 @@ import { catchError, map, Observable, throwError } from 'rxjs';
   providedIn: 'root'
 })
 export class EvaluationsService {
-  private apiUrl = 'http://localhost:5001/api/userAvaliations'
-  private leaderUrl = 'http://localhost:5001/api/leaderAvaliations'
+  private apiUrl = 'http://192.168.16.194:5001/api/userAvaliations'
+  private leaderUrl = 'http://192.168.16.194:5001/api/leaderAvaliations'
 
   constructor(private http: HttpClient) { }
 

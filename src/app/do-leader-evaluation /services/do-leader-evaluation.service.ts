@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class DoLeaderEvaluationService {
-  private apiUrl = 'http://localhost:5001/api';
+  private apiUrl = 'http://192.168.16.194:5001/api';
 
   constructor(private http: HttpClient) { }
 

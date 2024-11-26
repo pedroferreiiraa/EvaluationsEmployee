@@ -6,7 +6,7 @@ import { catchError, Observable, throwError, tap, of } from "rxjs";
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:5001/api/users/login';
+  private apiUrl = 'http://192.168.16.194:5001/api/users/login';
   private tokenKey = 'authToken';
 
   constructor(private http: HttpClient) {}

@@ -8,7 +8,7 @@ import { catchError, map, Observable, throwError } from 'rxjs';
 export class UserDetailsService {
 
 
-  private apiUrl = 'http://localhost:5001/api/users';  // Base da URL
+  private apiUrl = 'http://192.168.16.194:5001/api/users';  // Base da URL
 
   constructor(private http: HttpClient) { }
 

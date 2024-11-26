@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class EditUserService {
 
-  private apiUrl = 'http://localhost:5001/api/users';
+  private apiUrl = 'http://192.168.16.194:5001/api/users';
 
   constructor(
     private http: HttpClient

@@ -103,7 +103,7 @@ export class HomeComponent implements OnInit {
   }
 
   fetchCompletedEvaluations(): void {
-    this.http.get<[Evaluation]>('http://localhost:5001/api/userAvaliations').subscribe(
+    this.http.get<[Evaluation]>('http://192.168.16.194:5001/api/userAvaliations').subscribe(
       (evaluations) => {
         this.completedEvaluationsCount = evaluations.filter(evaluation => evaluation.status === 4).length;
       },
