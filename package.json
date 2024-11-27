@@ -20,6 +20,8 @@
     "@angular/platform-browser": "^18.2.9",
     "@angular/platform-browser-dynamic": "^18.2.9",
     "@angular/router": "^18.2.9",
+    "http-proxy-middleware": "^3.0.3",
+    "node": "^20.18.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.7.0",
     "zone.js": "~0.14.10"
